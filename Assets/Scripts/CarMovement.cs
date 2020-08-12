@@ -5,20 +5,11 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour
 {
     public Vector3 startPosition, startRotation;
-
+    Rigidbody rb;
 
     [Header("Car Settings")]
     public float carSpeed;
     public float turnSpeed;
-    // public float sensorDist;
-
-
-    [Header("Fitness Settings")]
-    public float distanceWeight;
-    public float speedWeight;
-
-    [Range(-1f, 1f)]
-    public float a, t;
 
     [Header("Statistics")]
     public float timer = 0;
@@ -26,73 +17,65 @@ public class CarMovement : MonoBehaviour
     public float avgSpeed;
     public float fitness;
 
+    [Header("Network Architecture")]
+    public int hiddenLayerCnt = 1;
+    public int nodeCount = 10;
+    NeuralNetwork network;
 
-    private float sensorA, sensorB, sensorC;
+    private List<float> sensorDistances = new List<float>();
+    
+    
+    float fovAngle = 130f;
+    int numSensors = 4;
+    float sensorUpdateTime = 0.2f;
+
     Vector3 lastPosition;
 
-    private void STart()
+    private void Start()
     {
+        rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
         startRotation = transform.eulerAngles;
+        network = GetComponent<NeuralNetwork>();
+
+        network.InitializeNetwork(numSensors, hiddenLayerCnt, nodeCount);
     }
 
-    public void Reset()
-    {
+    // private void OnCollisionEnter(Collision other)
+    // {
+    //     if (other.gameObject.tag == "wall")
+    //     {
+    //         print("you hit a wall boi");
+    //     }
+    // }
 
-    }
+    void UpdateSensors()
+    {   
+        // get all the directional vectors for the sensors based off the fiew of view and number of sensors
+        Vector3 dir = Quaternion.Euler(0, -fovAngle / 2f, 0) * transform.forward;
+        List<Vector3> sensorVectors = new List<Vector3>();
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag == "wall")
+        for (int i = 0; i < numSensors; i++)
         {
-            print("you hit a wall boi");
+            sensorVectors.Add(dir);
+            dir = Quaternion.Euler(0, fovAngle / ((float)numSensors - 1f), 0) * dir;
         }
-    }
 
-
-    void UpdateFitness()
-    {
-        totalDistance += Vector3.Distance(transform.position, lastPosition);
-        avgSpeed = totalDistance / timer;
-        fitness = totalDistance * distanceWeight + avgSpeed * speedWeight;
-    }
-
-
-    void InputSensors()
-    {
-        Vector3 right = (transform.forward + transform.right);
-        Vector3 forward = (transform.forward);
-        Vector3 left = (transform.forward - transform.right);
-
-        Ray r = new Ray(transform.position, right);
-
+        sensorDistances.Clear();
         RaycastHit hit;
+        Ray r;
 
-        Debug.DrawRay(transform.position, forward*10, Color.red);
-
-        if (Physics.Raycast(r, out hit))
+        // update the sensor ditances using the new raycast hit distances
+        for (int i = 0; i < numSensors; i++)
         {
-            sensorA = hit.distance;
-            Debug.DrawRay(transform.position, hit.point - transform.position, Color.red);
-            // print("right: " + sensorA);
-        }
+            r = new Ray(transform.position, sensorVectors[i]);
 
-        r.direction = forward;
+            if (Physics.Raycast(r, out hit))
+            {
+                sensorDistances.Add(hit.distance / 10f);
+                Debug.DrawRay(transform.position, hit.point - transform.position, Color.red);
+            }
 
-        if (Physics.Raycast(r, out hit, 100))
-        {
-            sensorB = hit.distance;
-            Debug.DrawRay(transform.position, hit.point - transform.position, Color.red);
-        }
-
-        r.direction = left;
-
-        if (Physics.Raycast(r, out hit))
-        {
-            sensorC = hit.distance;
-            Debug.DrawRay(transform.position, hit.point - transform.position, Color.red);
-
-            // print("left: " + sensorC);
         }
     }
 
@@ -104,16 +87,19 @@ public class CarMovement : MonoBehaviour
         transform.eulerAngles += new Vector3(0, rot * turnSpeed * Time.deltaTime, 0);
     }
 
-    private void FixedUpdate()
+    float accel, rotationAngle;
+    private void Update()
     {
-        InputSensors();
-        lastPosition = transform.position;
-
-        MoveCar(a, t);
-
         timer += Time.deltaTime;
+        
+        if (timer > sensorUpdateTime) {
+            UpdateSensors();
+            (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
 
-        UpdateFitness();
+            timer = 0;
+        }
+
+        MoveCar(accel, rotationAngle);
     }
 
 }
