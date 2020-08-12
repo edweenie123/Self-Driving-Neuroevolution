@@ -241,14 +241,14 @@ RectTransform:
   m_GameObject: {fileID: 322288409}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.09740602, y: 0.09740602, z: 0.09740602}
+  m_LocalScale: {x: 0.08880702, y: 0.08880702, z: 0.08880702}
   m_Children: []
   m_Father: {fileID: 1228254516}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -375, y: 180}
+  m_AnchoredPosition: {x: -375, y: 181.02}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &322288411
@@ -264,14 +264,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0.2432208, a: 1}
+  m_Color: {r: 1, g: 0.033018887, b: 0.3086526, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: f85ec05442496e048b0f7cb18a3230ea, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 180
     m_FontStyle: 0
     m_BestFit: 0
@@ -732,7 +732,7 @@ Transform:
   m_GameObject: {fileID: 795375044}
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 11.98, y: 0.375, z: -0.03}
-  m_LocalScale: {x: 23.327248, y: 0.75, z: 0.75000006}
+  m_LocalScale: {x: 23.327248, y: 0.75, z: 1.3312501}
   m_Children: []
   m_Father: {fileID: 758731829}
   m_RootOrder: 3
@@ -1008,7 +1008,7 @@ Transform:
   m_GameObject: {fileID: 1426278260}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.375, z: -11.43}
-  m_LocalScale: {x: 24.96425, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 24.96425, y: 0.75, z: 1.425}
   m_Children: []
   m_Father: {fileID: 758731829}
   m_RootOrder: 1
@@ -1101,7 +1101,7 @@ Transform:
   m_GameObject: {fileID: 1517015182}
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -11.58691, y: 0.375, z: -0.17586613}
-  m_LocalScale: {x: 22.508749, y: 0.75, z: 0.75000006}
+  m_LocalScale: {x: 22.508749, y: 0.75, z: 1.35}
   m_Children: []
   m_Father: {fileID: 758731829}
   m_RootOrder: 7
@@ -1193,14 +1193,14 @@ RectTransform:
   m_GameObject: {fileID: 1625136191}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.09740602, y: 0.09740602, z: 0.09740602}
+  m_LocalScale: {x: 0.08880702, y: 0.08880702, z: 0.08880702}
   m_Children: []
   m_Father: {fileID: 1228254516}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -375, y: 203}
+  m_AnchoredPosition: {x: -375, y: 201.98}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1625136193
@@ -1216,14 +1216,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0.2432208, a: 1}
+  m_Color: {r: 1, g: 0.033018887, b: 0.3086526, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: f85ec05442496e048b0f7cb18a3230ea, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 180
     m_FontStyle: 0
     m_BestFit: 0
@@ -1365,7 +1365,7 @@ Transform:
   m_GameObject: {fileID: 1907460477}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.375, z: 11.110001}
-  m_LocalScale: {x: 25.3735, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 25.3735, y: 0.75, z: 1.5374999}
   m_Children: []
   m_Father: {fileID: 758731829}
   m_RootOrder: 4
@@ -1442,6 +1442,7 @@ GameObject:
   - component: {fileID: 1985048980}
   - component: {fileID: 1985048982}
   - component: {fileID: 1985048983}
+  - component: {fileID: 1985048984}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1464,8 +1465,6 @@ MonoBehaviour:
   carPrefab: {fileID: 5687182246294279894, guid: a685846e46b3b7746a7d91205ed9d9e4,
     type: 3}
   startPosition: {x: -8.76, y: 0.325, z: -1.23}
-  populationSize: 15
-  populationTime: 10
   timer: 0
 --- !u!4 &1985048981
 Transform:
@@ -1506,6 +1505,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeScale: 1
+--- !u!114 &1985048984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1985048979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c02acf7e6c5b87e40a251d6301f44849, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2093098072
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,18 +9,17 @@ public class InputManager : MonoBehaviour
     float minTime = 1f;
     float maxTime = 10f;
 
-    void Update() 
+    void Update()
     {
-        if (Input.GetKey(KeyCode.RightArrow)) {
-            ChangeTime(1f);
-        } 
-        
-        if (Input.GetKey(KeyCode.LeftArrow)) {
-            ChangeTime(-1f);
-        }
+        if (Input.GetKey(KeyCode.RightArrow)) ChangeTime(1f);
+
+        if (Input.GetKey(KeyCode.LeftArrow)) ChangeTime(-1f);
+
+        if (Input.GetKeyUp(KeyCode.R)) SystemSettings.visualizeRayToggle = !SystemSettings.visualizeRayToggle;
     }
 
-    void ChangeTime(float sign) {
+    void ChangeTime(float sign)
+    {
         // update the timeScale value and ensure it's within the range [minTime, maxTime]
         timeScale += sign * changeTimeRate * Time.deltaTime;
         timeScale = Mathf.Min(maxTime, timeScale);

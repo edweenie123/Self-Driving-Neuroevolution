@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour
     public static Text generationText;
     public static Text timeScaleText;
 
-    void Start() {
+    void Awake() {
         generationText = GameObject.Find("GenerationText").GetComponent<Text>();    
         timeScaleText = GameObject.Find("TimeText").GetComponent<Text>();
     }
