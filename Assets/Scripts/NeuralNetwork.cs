@@ -15,6 +15,7 @@ public class NeuralNetwork : MonoBehaviour
 
     public float fitness;
 
+
     public void InitializeNetwork(int inputSize, int hiddenLayerCount, int hiddenNeuronCount)
     {
         hiddenLayers.Clear();
@@ -44,7 +45,7 @@ public class NeuralNetwork : MonoBehaviour
                 weights.Add(hiddenToHidden);
             }
         }
-
+    
         // initalize bias matrix for hidden layers
         for (int i = 0; i < hiddenLayerCount; i++)
         {
