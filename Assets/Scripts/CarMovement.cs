@@ -5,6 +5,7 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour
 {
     public GameObject laserLinePrefab;
+    public GameObject deathEffect;
 
     Vector3 lastPosition;
     Vector3 startPosition, startRotation;
@@ -28,6 +29,8 @@ public class CarMovement : MonoBehaviour
     float fovAngle = 130f;
     int numSensors = 4;
 
+    public bool isDead = false;
+
     float feedForwardInterval = 0.3f; // time between every forward propagation
 
     private void Start()
@@ -40,6 +43,32 @@ public class CarMovement : MonoBehaviour
         network.InitializeNetwork(numSensors);
 
         InitializeSensorLines();
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.transform.tag == "wall") Die();
+    }
+
+    void Die()
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            // make invisible
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            gameObject.GetComponent<BoxCollider>().enabled = false;
+            
+            // particle effect
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
+
+            // make the sensor lines invisible
+            foreach (var line in sensorLines)
+            {
+                line.SetPosition(0, Vector3.zero);
+                line.SetPosition(1, Vector3.zero);
+            }
+        }
     }
 
     void InitializeSensorLines()
@@ -113,17 +142,20 @@ public class CarMovement : MonoBehaviour
     float accel, rotationAngle;
     private void Update()
     {
-        timer += Time.deltaTime;
-
-        UpdateSensors();
-
-        if (timer > feedForwardInterval)
+        if (!isDead)
         {
-            (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
-            timer = 0;
-        }
+            timer += Time.deltaTime;
 
-        MoveCar(accel, rotationAngle);
+            UpdateSensors();
+
+            if (timer > feedForwardInterval)
+            {
+                (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
+                timer = 0;
+            }
+
+            MoveCar(accel, rotationAngle);
+        }
     }
 
 }

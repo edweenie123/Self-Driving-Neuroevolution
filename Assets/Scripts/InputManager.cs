@@ -5,26 +5,23 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public float timeScale = 1f;
-    float changeTimeRate = 0.5f;
     float minTime = 1f;
     float maxTime = 10f;
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.RightArrow)) ChangeTime(1f);
+        if (Input.GetKeyUp(KeyCode.RightArrow)) ChangeTime(1f);
 
-        if (Input.GetKey(KeyCode.LeftArrow)) ChangeTime(-1f);
+        if (Input.GetKeyUp(KeyCode.LeftArrow)) ChangeTime(-1f);
 
         if (Input.GetKeyUp(KeyCode.R)) SystemSettings.visualizeRayToggle = !SystemSettings.visualizeRayToggle;
      
     }
 
-
-    
     void ChangeTime(float sign)
     {
         // update the timeScale value and ensure it's within the range [minTime, maxTime]
-        timeScale += sign * changeTimeRate * Time.deltaTime;
+        timeScale += sign;
         timeScale = Mathf.Min(maxTime, timeScale);
         timeScale = Mathf.Max(minTime, timeScale);
     
