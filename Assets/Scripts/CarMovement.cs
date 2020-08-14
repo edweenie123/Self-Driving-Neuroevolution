@@ -4,35 +4,31 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
-    public Vector3 startPosition, startRotation;
     public GameObject laserLinePrefab;
 
-    Rigidbody rb;
+    Vector3 lastPosition;
+    Vector3 startPosition, startRotation;
+    float timer = 0;
 
-    [Header("Car Settings")]
+    Rigidbody rb;
+    NeuralNetwork network;
+
+    [Header("Car Move Settings")]
     public float carSpeed;
     public float turnSpeed;
 
     [Header("Statistics")]
-    public float timer = 0;
     public float totalDistance = 0;
     public float avgSpeed;
     public float fitness;
 
-    [Header("Network Architecture")]
-    public int hiddenLayerCnt = 1;
-    public int nodeCount = 10;
-    NeuralNetwork network;
-
     List<float> sensorDistances = new List<float>();
     List<Vector3> sensorVectors = new List<Vector3>();
     List<LineRenderer> sensorLines = new List<LineRenderer>();
-
     float fovAngle = 130f;
     int numSensors = 4;
-    float sensorUpdateTime = 0f;
 
-    Vector3 lastPosition;
+    float feedForwardInterval = 0.3f; // time between every forward propagation
 
     private void Start()
     {
@@ -41,7 +37,7 @@ public class CarMovement : MonoBehaviour
         startRotation = transform.eulerAngles;
         network = GetComponent<NeuralNetwork>();
 
-        network.InitializeNetwork(numSensors, hiddenLayerCnt, nodeCount);
+        network.InitializeNetwork(numSensors);
 
         InitializeSensorLines();
     }
@@ -91,7 +87,6 @@ public class CarMovement : MonoBehaviour
                 sensorLines[i].SetPosition(1, Vector3.zero);
             }
         }
-
     }
 
     // get all the directional vectors for the sensors based off the fiew of view and number of sensors
@@ -122,7 +117,7 @@ public class CarMovement : MonoBehaviour
 
         UpdateSensors();
 
-        if (timer > sensorUpdateTime)
+        if (timer > feedForwardInterval)
         {
             (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
             timer = 0;

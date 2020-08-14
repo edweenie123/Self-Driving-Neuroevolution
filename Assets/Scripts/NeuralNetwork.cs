@@ -7,16 +7,16 @@ using System.Linq;
 
 public class NeuralNetwork : MonoBehaviour
 {
+    public int hiddenLayerCnt = 1;
+    public int hiddenNeuronCnt = 10;
+    
     public Matrix<float> inputLayer;
     public List<Matrix<float>> hiddenLayers = new List<Matrix<float>>();
     public Matrix<float> outputLayer = Matrix<float>.Build.Dense(1, 2);
     public List<Matrix<float>> weights = new List<Matrix<float>>();
     public List<Matrix<float>> biases = new List<Matrix<float>>();
 
-    public float fitness;
-
-
-    public void InitializeNetwork(int inputSize, int hiddenLayerCount, int hiddenNeuronCount)
+    public void InitializeNetwork(int inputSize)
     {
         hiddenLayers.Clear();
         outputLayer.Clear();
@@ -27,29 +27,29 @@ public class NeuralNetwork : MonoBehaviour
         inputLayer = Matrix<float>.Build.Dense(1, inputSize);
 
         // initialize weights matrix from input layer to hidden layer
-        if (hiddenLayerCount > 0)
+        if (hiddenLayerCnt > 0)
         {
-            Matrix<float> inputToHidden = Matrix<float>.Build.Dense(inputSize, hiddenNeuronCount);
+            Matrix<float> inputToHidden = Matrix<float>.Build.Dense(inputSize, hiddenNeuronCnt);
             weights.Add(inputToHidden);
         }
 
         // initialize wieghts matrix from hidden layer to hidden layer
-        for (int i = 0; i < hiddenLayerCount; i++)
+        for (int i = 0; i < hiddenLayerCnt; i++)
         {
-            Matrix<float> f = Matrix<float>.Build.Dense(1, hiddenNeuronCount);
+            Matrix<float> f = Matrix<float>.Build.Dense(1, hiddenNeuronCnt);
             hiddenLayers.Add(f);
 
             // add weight matrix from current layer to next hidden layer
-            if (i != hiddenLayerCount-1) {
-                Matrix<float> hiddenToHidden = Matrix<float>.Build.Dense(hiddenNeuronCount, hiddenNeuronCount);
+            if (i != hiddenLayerCnt-1) {
+                Matrix<float> hiddenToHidden = Matrix<float>.Build.Dense(hiddenNeuronCnt, hiddenNeuronCnt);
                 weights.Add(hiddenToHidden);
             }
         }
     
         // initalize bias matrix for hidden layers
-        for (int i = 0; i < hiddenLayerCount; i++)
+        for (int i = 0; i < hiddenLayerCnt; i++)
         {
-            biases.Add(Matrix<float>.Build.Dense(1, hiddenNeuronCount));
+            biases.Add(Matrix<float>.Build.Dense(1, hiddenNeuronCnt));
         }
 
         // add bias matrix for output layer
@@ -57,7 +57,7 @@ public class NeuralNetwork : MonoBehaviour
 
         // initalize weights matrix from the last hidden layer / input layer to output layer
         Matrix<float> outputMatrix;
-        if (hiddenLayerCount > 0) outputMatrix = Matrix<float>.Build.Dense(hiddenNeuronCount, 2);
+        if (hiddenLayerCnt > 0) outputMatrix = Matrix<float>.Build.Dense(hiddenNeuronCnt, 2);
         else outputMatrix = Matrix<float>.Build.Dense(inputSize, 2);
         weights.Add(outputMatrix);
 
