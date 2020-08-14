@@ -136,6 +136,7 @@ MonoBehaviour:
   fitness: 0
   hiddenLayerCnt: 1
   nodeCount: 10
+  numSensors: 3
 --- !u!114 &5687182246294279881
 MonoBehaviour:
   m_ObjectHideFlags: 0
