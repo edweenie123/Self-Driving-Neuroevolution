@@ -50,15 +50,24 @@ public class CarMovement : MonoBehaviour
         if (other.transform.tag == "wall") Die();
     }
 
-    // makes car invisible + ignore collisions and instantiates particle effect
     void Die()
     {
         if (!isDead)
         {
             isDead = true;
+            // make invisible
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             gameObject.GetComponent<BoxCollider>().enabled = false;
+            
+            // particle effect
             Instantiate(deathEffect, transform.position, Quaternion.identity);
+
+            // make the sensor lines invisible
+            foreach (var line in sensorLines)
+            {
+                line.SetPosition(0, Vector3.zero);
+                line.SetPosition(1, Vector3.zero);
+            }
         }
     }
 

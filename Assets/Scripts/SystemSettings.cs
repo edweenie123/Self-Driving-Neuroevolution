@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class SystemSettings : MonoBehaviour
 {
-    public static bool visualizeRayToggle = false;
+    public static bool visualizeRayToggle = true;
 }
