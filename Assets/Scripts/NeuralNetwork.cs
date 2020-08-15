@@ -77,6 +77,20 @@ public class NeuralNetwork : MonoBehaviour
                     weights[i][j, k] = Random.Range(-1f, 1f);
     }
 
+    // sets neural network's weights to be identical to nn
+    public void SetWeights(NeuralNetwork nn) 
+    {
+        for (int i = 0; i < biases.Count; i++)
+            for (int j = 0; j < biases[i].ColumnCount; j++)
+                biases[i][0, j] = nn.biases[i][0, j];
+
+        // randomize the value for every weight
+        for (int i = 0; i < weights.Count; i++)
+            for (int j = 0; j < weights[i].RowCount; j++)
+                for (int k = 0; k < weights[i].ColumnCount; k++)
+                    weights[i][j, k] = weights[i][j, k];
+    }
+
     public (float, float) ForwardPropagate(List<float> sensorInfo)
     {
         // feed the sensor information into the input layer and perform the activation function (tanh)
