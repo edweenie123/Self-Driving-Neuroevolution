@@ -21,13 +21,14 @@ public class CarMovement : MonoBehaviour
     [Header("Statistics")]
     public float totalDistance = 0;
     public float avgSpeed;
+    float timeSinceStart = 0;
     public float fitness;
 
     List<float> sensorDistances = new List<float>();
     List<Vector3> sensorVectors = new List<Vector3>();
     List<LineRenderer> sensorLines = new List<LineRenderer>();
-    float fovAngle = 130f;
-    int numSensors = 4;
+    float fovAngle = 120f;
+    int numSensors;
 
     public bool isDead = false;
 
@@ -37,10 +38,11 @@ public class CarMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
+        lastPosition = startPosition;
         startRotation = transform.eulerAngles;
         network = GetComponent<NeuralNetwork>();
 
-        network.InitializeNetwork(numSensors);
+        numSensors = network.inputSize;
 
         InitializeSensorLines();
     }
@@ -53,12 +55,13 @@ public class CarMovement : MonoBehaviour
     void Die()
     {
         if (!isDead)
-        {
+        {   
+            // print(fitness);
             isDead = true;
             // make invisible
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             gameObject.GetComponent<BoxCollider>().enabled = false;
-            
+
             // particle effect
             Instantiate(deathEffect, transform.position, Quaternion.identity);
 
@@ -69,6 +72,16 @@ public class CarMovement : MonoBehaviour
                 line.SetPosition(1, Vector3.zero);
             }
         }
+    }
+
+    void UpdateFitness()
+    {
+        // timeSinceStart += Time.deltaTime;
+
+        totalDistance += Vector3.Distance(transform.position, lastPosition);
+        lastPosition = transform.position;
+
+        fitness = totalDistance * totalDistance;        
     }
 
     void InitializeSensorLines()
@@ -139,20 +152,30 @@ public class CarMovement : MonoBehaviour
         transform.eulerAngles += new Vector3(0, rot * turnSpeed * Time.deltaTime, 0);
     }
 
-    float accel, rotationAngle;
-    private void Update()
+    [Range(-1f, 1f)]
+    public float accel, rotationAngle;
+
+    float timer2 = 0;
+
+    void FixedUpdate()
     {
         if (!isDead)
         {
             timer += Time.deltaTime;
+            // timer2 += Time.deltaTime;
+
+            // if (timer2 > 0.1f) 
+                UpdateFitness();
+                // timer2 = 0;
+            // }
 
             UpdateSensors();
 
-            if (timer > feedForwardInterval)
-            {
+            // if (timer > feedForwardInterval)
+            // {
                 (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
                 timer = 0;
-            }
+            // }
 
             MoveCar(accel, rotationAngle);
         }
