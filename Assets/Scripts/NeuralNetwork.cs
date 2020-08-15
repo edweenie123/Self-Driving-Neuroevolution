@@ -9,7 +9,7 @@ public class NeuralNetwork : MonoBehaviour
 {
     public int inputSize = 3;
     int hiddenLayerCnt = 1;
-    int hiddenNeuronCnt = 6;
+    int hiddenNeuronCnt = 8;
 
     public Matrix<float> inputLayer;
     public List<Matrix<float>> hiddenLayers = new List<Matrix<float>>();
@@ -89,7 +89,7 @@ public class NeuralNetwork : MonoBehaviour
         for (int i = 0; i < weights.Count; i++)
             for (int j = 0; j < weights[i].RowCount; j++)
                 for (int k = 0; k < weights[i].ColumnCount; k++)
-                    weights[i][j, k] = weights[i][j, k];
+                    weights[i][j, k] = nn.weights[i][j, k];
     }
 
     public (float, float) ForwardPropagate(List<float> sensorInfo)
@@ -128,15 +128,22 @@ public class NeuralNetwork : MonoBehaviour
         
         for (int i = 0; i < biases.Count; i++)
             for (int j = 0; j < biases[i].ColumnCount; j++)
-                if (Random.Range(0f, 1f) < mutationRate) 
-                    biases[i][0, j] = Random.Range(-1f, 1f);
+                if (Random.Range(0f, 1f) < mutationRate) {
+                    float rand = Random.Range(-1f, 1f);
+                    biases[i][0, j] += rand;
+                    biases[i][0, j] = Mathf.Clamp(biases[i][0, j], -1f, 1f);
+                }
 
         // randomize the value for every weight
         for (int i = 0; i < weights.Count; i++)
             for (int j = 0; j < weights[i].RowCount; j++)
                 for (int k = 0; k < weights[i].ColumnCount; k++)
-                    if (Random.Range(0f, 1f) < mutationRate) 
-                        weights[i][j, k] = Random.Range(-1f, 1f);
+                    if (Random.Range(0f, 1f) < mutationRate) {
+                        float rand = Random.Range(-1f, 1f);
+                        weights[i][j, k] += rand;
+                        weights[i][j, k] = Mathf.Clamp(weights[i][j, k], -1f, 1f);
+
+                    }
     }
 
 }

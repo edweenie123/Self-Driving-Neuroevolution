@@ -7,7 +7,7 @@ public class PopulationManager : MonoBehaviour
     public GameObject carPrefab;
     public Vector3 startPosition;
 
-    int populationSize = 25;
+    int populationSize = 20;
     float populationTime = 25f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
@@ -18,9 +18,11 @@ public class PopulationManager : MonoBehaviour
     List<GameObject> lastGeneration = new List<GameObject>();
     List<GameObject> currentGeneration = new List<GameObject>();
     List<float> matingPool = new List<float>();
+
+    public List<float> averageFitnesses = new List<float>();
     float matingPoolSum; // sum of all fitnesses in mating pool
 
-    public static float mutationRate = 0.1f;
+    public static float mutationRate = 0.05f;
 
     void Start()
     {
@@ -86,13 +88,16 @@ public class PopulationManager : MonoBehaviour
         lastGeneration.Clear();
         foreach (var c in currentGeneration) lastGeneration.Add(c);
 
-
+        timer2 = 0;
         // destroy everything in the last generation
         foreach (var c in currentGeneration) Destroy(c);
         currentGeneration.Clear();
 
         CreateMatingPool();
 
+        averageFitnesses.Add(matingPoolSum / (float)populationSize);
+
+        // THIS DOESN'T WORK AND IDK WHY
         NeuralNetwork bestInPopulation = GetBestMemberInPopulation();
         GameObject bestT = Instantiate(carPrefab, startPosition, Quaternion.identity);
         NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
@@ -101,8 +106,9 @@ public class PopulationManager : MonoBehaviour
         currentGeneration.Add(bestT);
 
         // generate the new generation
-        for (int i = 0; i < populationSize - 1; i++)
+        for (int i = 0; i < populationSize-1; i++)
         {
+            print("testing");
             // find two parents (probability based off fitness) and make a child using crossover
             NeuralNetwork parentA = SelectParent();
             NeuralNetwork parentB = SelectParent();
@@ -151,6 +157,8 @@ public class PopulationManager : MonoBehaviour
             }
         }
 
+        print("best boi here is " + bestIdx + "with fitness of " + bestFitness);
+
         return lastGeneration[bestIdx].GetComponent<NeuralNetwork>();
     }
 
@@ -168,6 +176,7 @@ public class PopulationManager : MonoBehaviour
                 return lastGeneration[i].GetComponent<NeuralNetwork>();
         }
 
+        // print("big problem boi");
         // we will never reach this point (probably)
         return null;
     }
@@ -183,9 +192,14 @@ public class PopulationManager : MonoBehaviour
         {
             for (int j = 0; j < child.biases[i].ColumnCount; j++)
             {
-                if (Random.Range(0f, 1f) > 0.5f) child.biases[i][0, j] = A.biases[i][0, j];
+                if (Random.Range(0f, 1f) > 0f) child.biases[i][0, j] = A.biases[i][0, j];
                 else child.biases[i][0, j] = B.biases[i][0, j];
             }
+            // if (Random.Range(0f, 1f) > 0.5f) {
+            //     child.biases[i] = A.biases[i];
+            // } else {
+            //     child.biases[i] = B.biases[i];
+            // }
         }
 
         // equal chance of having either parent's weights 
@@ -196,10 +210,16 @@ public class PopulationManager : MonoBehaviour
                 for (int k = 0; k < child.weights[i].ColumnCount; k++)
                 {
                     child.weights[i][j, k] = Random.Range(-1f, 1f);
-                    if (Random.Range(0f, 1f) > 0.5f) child.weights[i][j, k] = A.weights[i][j, k];
+                    if (Random.Range(0f, 1f) > 0f) child.weights[i][j, k] = A.weights[i][j, k];
                     else child.weights[i][j, k] = B.weights[i][j, k];
                 }
             }
+
+            // if (Random.Range(0f, 1f) > 0.5f) {
+            //     child.weights[i] = A.weights[i];
+            // } else {
+            //     child.weights[i] = B.weights[i];
+            // }
         }
 
         return child;
