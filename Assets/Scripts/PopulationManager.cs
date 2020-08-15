@@ -29,8 +29,14 @@ public class PopulationManager : MonoBehaviour
 
         if (timer > checkAllDeadInterval)
         {
-            if (EntireGenerationDead() || timer2 > populationTime) CreateNewGeneration();
+            if (EntireGenerationDead()) CreateNewGeneration();
             timer = 0;
+        }
+
+        if (timer2 > populationTime)
+        {
+            CreateNewGeneration();
+            timer2 = 0;
         }
     }
 
