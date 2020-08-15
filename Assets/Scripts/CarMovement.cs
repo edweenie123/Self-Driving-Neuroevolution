@@ -21,6 +21,7 @@ public class CarMovement : MonoBehaviour
     [Header("Statistics")]
     public float totalDistance = 0;
     public float avgSpeed;
+    float timeSinceStart = 0;
     public float fitness;
 
     List<float> sensorDistances = new List<float>();
@@ -53,12 +54,12 @@ public class CarMovement : MonoBehaviour
     void Die()
     {
         if (!isDead)
-        {
+        {   
             isDead = true;
             // make invisible
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             gameObject.GetComponent<BoxCollider>().enabled = false;
-            
+
             // particle effect
             Instantiate(deathEffect, transform.position, Quaternion.identity);
 
@@ -69,6 +70,16 @@ public class CarMovement : MonoBehaviour
                 line.SetPosition(1, Vector3.zero);
             }
         }
+    }
+
+    void UpdateFitness()
+    {
+        timeSinceStart += Time.deltaTime;
+
+        totalDistance += Vector3.Distance(transform.position, lastPosition);
+        lastPosition = transform.position;
+
+        fitness = totalDistance * totalDistance;
     }
 
     void InitializeSensorLines()
@@ -140,12 +151,14 @@ public class CarMovement : MonoBehaviour
     }
 
     float accel, rotationAngle;
-    private void Update()
+
+    void Update()
     {
         if (!isDead)
         {
             timer += Time.deltaTime;
 
+            UpdateFitness();
             UpdateSensors();
 
             if (timer > feedForwardInterval)

@@ -7,7 +7,7 @@ public class PopulationManager : MonoBehaviour
     public GameObject carPrefab;
     public Vector3 startPosition;
 
-    int populationSize = 15;
+    int populationSize = 1;
     float populationTime = 25f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
