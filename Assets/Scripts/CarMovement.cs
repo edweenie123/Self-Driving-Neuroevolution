@@ -4,35 +4,34 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
-    public Vector3 startPosition, startRotation;
     public GameObject laserLinePrefab;
-    
-    Rigidbody rb;
+    public GameObject deathEffect;
 
-    [Header("Car Settings")]
+    Vector3 lastPosition;
+    Vector3 startPosition, startRotation;
+    float timer = 0;
+
+    Rigidbody rb;
+    NeuralNetwork network;
+
+    [Header("Car Move Settings")]
     public float carSpeed;
     public float turnSpeed;
 
     [Header("Statistics")]
-    public float timer = 0;
     public float totalDistance = 0;
     public float avgSpeed;
     public float fitness;
 
-    [Header("Network Architecture")]
-    public int hiddenLayerCnt = 1;
-    public int nodeCount = 10;
-    NeuralNetwork network;
-
-    private List<float> sensorDistances = new List<float>();
-
+    List<float> sensorDistances = new List<float>();
+    List<Vector3> sensorVectors = new List<Vector3>();
     List<LineRenderer> sensorLines = new List<LineRenderer>();
-
     float fovAngle = 130f;
     int numSensors = 4;
-    float sensorUpdateTime = 0f;
 
-    Vector3 lastPosition;
+    public bool isDead = false;
+
+    float feedForwardInterval = 0.3f; // time between every forward propagation
 
     private void Start()
     {
@@ -41,9 +40,35 @@ public class CarMovement : MonoBehaviour
         startRotation = transform.eulerAngles;
         network = GetComponent<NeuralNetwork>();
 
-        network.InitializeNetwork(numSensors, hiddenLayerCnt, nodeCount);
+        network.InitializeNetwork(numSensors);
 
         InitializeSensorLines();
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.transform.tag == "wall") Die();
+    }
+
+    void Die()
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            // make invisible
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            gameObject.GetComponent<BoxCollider>().enabled = false;
+            
+            // particle effect
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
+
+            // make the sensor lines invisible
+            foreach (var line in sensorLines)
+            {
+                line.SetPosition(0, Vector3.zero);
+                line.SetPosition(1, Vector3.zero);
+            }
+        }
     }
 
     void InitializeSensorLines()
@@ -56,17 +81,10 @@ public class CarMovement : MonoBehaviour
         }
     }
 
+    // update sensor information and visualize the ray information
     void UpdateSensors()
     {
-        // get all the directional vectors for the sensors based off the fiew of view and number of sensors
-        Vector3 dir = Quaternion.Euler(0, -fovAngle / 2f, 0) * transform.forward;
-        List<Vector3> sensorVectors = new List<Vector3>();
-
-        for (int i = 0; i < numSensors; i++)
-        {
-            sensorVectors.Add(dir);
-            dir = Quaternion.Euler(0, fovAngle / ((float)numSensors - 1f), 0) * dir;
-        }
+        GetSensorDirections();
 
         sensorDistances.Clear();
         RaycastHit hit;
@@ -81,18 +99,35 @@ public class CarMovement : MonoBehaviour
             {
                 sensorDistances.Add(hit.distance / 10f);
 
-                // visualize the rays if the visualize ray toggle is on
-                if (SystemSettings.visualizeRayToggle) {
+                if (SystemSettings.visualizeRayToggle)
+                {
                     sensorLines[i].SetPosition(0, transform.position);
                     sensorLines[i].SetPosition(1, hit.point);
-                } else {
+                }
+                else
+                {
                     sensorLines[i].SetPosition(0, Vector3.zero);
                     sensorLines[i].SetPosition(1, Vector3.zero);
                 }
-            } else {
+            }
+            else
+            {
                 sensorLines[i].SetPosition(0, Vector3.zero);
                 sensorLines[i].SetPosition(1, Vector3.zero);
             }
+        }
+    }
+
+    // get all the directional vectors for the sensors based off the fiew of view and number of sensors
+    void GetSensorDirections()
+    {
+        sensorVectors.Clear();
+        Vector3 dir = Quaternion.Euler(0, -fovAngle / 2f, 0) * transform.forward;
+
+        for (int i = 0; i < numSensors; i++)
+        {
+            sensorVectors.Add(dir);
+            dir = Quaternion.Euler(0, fovAngle / ((float)numSensors - 1f), 0) * dir;
         }
     }
 
@@ -107,17 +142,20 @@ public class CarMovement : MonoBehaviour
     float accel, rotationAngle;
     private void Update()
     {
-        timer += Time.deltaTime;
-
-        if (timer > sensorUpdateTime)
+        if (!isDead)
         {
+            timer += Time.deltaTime;
+
             UpdateSensors();
-            (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
 
-            timer = 0;
+            if (timer > feedForwardInterval)
+            {
+                (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
+                timer = 0;
+            }
+
+            MoveCar(accel, rotationAngle);
         }
-
-        MoveCar(accel, rotationAngle);
     }
 
 }

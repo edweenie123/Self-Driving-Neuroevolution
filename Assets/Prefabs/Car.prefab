@@ -124,18 +124,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7cba0950f98674ab90adfd89df7b3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPosition: {x: 0, y: 0, z: 0}
-  startRotation: {x: 0, y: 0, z: 0}
   laserLinePrefab: {fileID: 7494958004028343787, guid: df3fa4bd5d8d5b744a84c2a8398dd67e,
+    type: 3}
+  deathEffect: {fileID: 5754707388052246271, guid: 651274cecb643b24e8f6004ac42ea677,
     type: 3}
   carSpeed: 300
   turnSpeed: 50
-  timer: 0
   totalDistance: 0
   avgSpeed: 0
   fitness: 0
-  hiddenLayerCnt: 1
-  nodeCount: 10
 --- !u!114 &5687182246294279881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,4 +145,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5186adc7a685fdc44beea1da727157d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fitness: 0
+  hiddenLayerCnt: 1
+  hiddenNeuronCnt: 10
