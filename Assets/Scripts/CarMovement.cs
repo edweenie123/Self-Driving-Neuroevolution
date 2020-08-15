@@ -29,7 +29,7 @@ public class CarMovement : MonoBehaviour
     float fovAngle = 130f;
     int numSensors = 4;
 
-    bool isDead = false;
+    public bool isDead = false;
 
     float feedForwardInterval = 0.3f; // time between every forward propagation
 
@@ -47,20 +47,20 @@ public class CarMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.transform.tag == "wall")
-        {
-            if (!isDead) {
-                isDead = true;
-                gameObject.GetComponent<MeshRenderer>().enabled = false;
-                gameObject.GetComponent<BoxCollider>().enabled = false;
-                Instantiate(deathEffect, transform.position, Quaternion.identity);
-            }
-        }
+        if (other.transform.tag == "wall") Die();
     }
 
-
-    
-
+    // makes car invisible + ignore collisions and instantiates particle effect
+    void Die()
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            gameObject.GetComponent<BoxCollider>().enabled = false;
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
+        }
+    }
 
     void InitializeSensorLines()
     {

@@ -8,27 +8,51 @@ public class PopulationManager : MonoBehaviour
     public Vector3 startPosition;
 
     int populationSize = 15;
-    float populationTime = 10f;
-    public float timer = 0;
-    
+    float populationTime = 25f;
+    float checkAllDeadInterval = 0.5f;
+    float timer = 0;
+    float timer2 = 0;
+
     int generationNumber = 1;
 
     List<GameObject> currentGeneration = new List<GameObject>();
 
-    void Start() {
+    void Start()
+    {
         CreateNewGeneration();
     }
 
-    void Update() {
+    void Update()
+    {
         timer += Time.deltaTime;
+        timer2 += Time.deltaTime;
 
-        if (timer > populationTime) {
+        if (timer > checkAllDeadInterval)
+        {
+            if (EntireGenerationDead() || timer2 > populationTime) CreateNewGeneration();
             timer = 0;
-            CreateNewGeneration();
         }
     }
 
-    void CreateNewGeneration() {
+    // returns true if all cars in current generation are dead
+    bool EntireGenerationDead()
+    {
+        bool allDead = true;
+        foreach (var car in currentGeneration)
+        {
+            if (!car.GetComponent<CarMovement>().isDead)
+            {
+                allDead = false;
+                break;
+            }
+        }
+
+        return allDead;
+    }
+
+
+    void CreateNewGeneration()
+    {
         // update the generation text ui
         UIManager.EditText(UIManager.generationText, "Generation: " + generationNumber);
         generationNumber++;
@@ -38,9 +62,10 @@ public class PopulationManager : MonoBehaviour
         currentGeneration.Clear();
 
         // create the new generation and it to the currentGernation list
-        for (int i=0;i<populationSize;i++) {
+        for (int i = 0; i < populationSize; i++)
+        {
             GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
             currentGeneration.Add(t);
         }
     }
-}   
+}
