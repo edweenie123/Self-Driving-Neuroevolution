@@ -17,14 +17,14 @@ public class PopulationManager : MonoBehaviour
 
     List<GameObject> lastGeneration = new List<GameObject>();
     List<GameObject> currentGeneration = new List<GameObject>();
-    List<float> matingPool;
+    List<float> matingPool = new List<float>();
     float matingPoolSum; // sum of all fitnesses in mating pool
 
     float mutationRate = 0.03f;
 
     void Start()
     {
-        CreateNewGeneration();
+        CreateStartingGeneration();
     }
 
     void Update()
@@ -61,6 +61,25 @@ public class PopulationManager : MonoBehaviour
         return allDead;
     }
 
+    void CreateStartingGeneration() 
+    {
+        for (int i = 0; i < populationSize; i++)
+        {
+            // instantiate a car and set it's neural network weights to be equal to the child's
+            GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
+            NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
+            
+            childNetwork.InitializeNetwork();
+            childNetwork.RandomizeWeights();
+
+            currentGeneration.Add(t);
+        }
+
+        // update the generation text ui
+        UIManager.EditText(UIManager.generationText, "Generation: " + generationNumber);
+        generationNumber++;
+    }
+
     void CreateNewGeneration()
     {
         // add all elements from the current generation array to the last generation array
@@ -79,11 +98,14 @@ public class PopulationManager : MonoBehaviour
             // find two parents (probability based off fitness) and make a child using crossover
             NeuralNetwork parentA = SelectParent();
             NeuralNetwork parentB = SelectParent();
-            NeuralNetwork childNetwork = Crossover(parentA, parentB);
+            NeuralNetwork crossoverChild = Crossover(parentA, parentB);
 
             // instantiate a car and set it's neural network weights to be equal to the child's
             GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
-            t.GetComponent<NeuralNetwork>().SetWeights(childNetwork);
+            NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
+            
+            childNetwork.InitializeNetwork();
+            childNetwork.SetWeights(crossoverChild);
 
             currentGeneration.Add(t);
         }

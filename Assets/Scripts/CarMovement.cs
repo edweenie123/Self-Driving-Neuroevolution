@@ -43,9 +43,6 @@ public class CarMovement : MonoBehaviour
         network = GetComponent<NeuralNetwork>();
 
         numSensors = network.inputSize;
-        
-        network.InitializeNetwork();
-        network.RandomizeWeights();
 
         InitializeSensorLines();
     }
