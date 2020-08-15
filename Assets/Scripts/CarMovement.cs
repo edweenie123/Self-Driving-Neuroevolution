@@ -28,7 +28,7 @@ public class CarMovement : MonoBehaviour
     List<Vector3> sensorVectors = new List<Vector3>();
     List<LineRenderer> sensorLines = new List<LineRenderer>();
     float fovAngle = 130f;
-    int numSensors = 4;
+    int numSensors;
 
     public bool isDead = false;
 
@@ -36,12 +36,16 @@ public class CarMovement : MonoBehaviour
 
     private void Start()
     {
+        
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
         startRotation = transform.eulerAngles;
         network = GetComponent<NeuralNetwork>();
 
-        network.InitializeNetwork(numSensors);
+        numSensors = network.inputSize;
+        
+        network.InitializeNetwork();
+        network.RandomizeWeights();
 
         InitializeSensorLines();
     }

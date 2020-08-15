@@ -7,6 +7,7 @@ using System.Linq;
 
 public class NeuralNetwork : MonoBehaviour
 {
+    public int inputSize = 4;
     public int hiddenLayerCnt = 1;
     public int hiddenNeuronCnt = 10;
     
@@ -16,7 +17,7 @@ public class NeuralNetwork : MonoBehaviour
     public List<Matrix<float>> weights = new List<Matrix<float>>();
     public List<Matrix<float>> biases = new List<Matrix<float>>();
 
-    public void InitializeNetwork(int inputSize)
+    public void InitializeNetwork()
     {
         hiddenLayers.Clear();
         outputLayer.Clear();
@@ -60,8 +61,6 @@ public class NeuralNetwork : MonoBehaviour
         if (hiddenLayerCnt > 0) outputMatrix = Matrix<float>.Build.Dense(hiddenNeuronCnt, 2);
         else outputMatrix = Matrix<float>.Build.Dense(inputSize, 2);
         weights.Add(outputMatrix);
-
-        RandomizeWeights();
     }
 
     public void RandomizeWeights()

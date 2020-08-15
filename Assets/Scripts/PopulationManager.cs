@@ -7,7 +7,7 @@ public class PopulationManager : MonoBehaviour
     public GameObject carPrefab;
     public Vector3 startPosition;
 
-    int populationSize = 1;
+    int populationSize = 15;
     float populationTime = 25f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
@@ -56,7 +56,6 @@ public class PopulationManager : MonoBehaviour
         return allDead;
     }
 
-
     void CreateNewGeneration()
     {
         // update the generation text ui
@@ -73,5 +72,32 @@ public class PopulationManager : MonoBehaviour
             GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
             currentGeneration.Add(t);
         }
+    }
+
+    // takes two parents A and B => returns set's the weights of child
+    NeuralNetwork Crossover(NeuralNetwork A, NeuralNetwork B, NeuralNetwork child)
+    {
+        child.InitializeNetwork();
+        
+        // equal chance of having either parent's biases
+        for (int i = 0; i < child.biases.Count; i++) {
+            for (int j = 0; j < child.biases[i].ColumnCount; j++) {
+                if (Random.Range(0f, 1f) > 0.5f)    child.biases[i][0, j] = A.biases[i][0, j];
+                else                                child.biases[i][0, j] = B.biases[i][0, j];     
+            }
+        }
+
+        // equal chance of having either parent's weights 
+        for (int i = 0; i < child.weights.Count; i++) {
+            for (int j = 0; j < child.weights[i].RowCount; j++) {
+                for (int k = 0; k < child.weights[i].ColumnCount; k++) {
+                    child.weights[i][j, k] = Random.Range(-1f, 1f);
+                    if (Random.Range(0f, 1f) > 0.5f)    child.weights[i][j, k] = A.weights[i][j, k];
+                    else                                child.weights[i][j, k] = B.weights[i][j, k];   
+                }
+            }
+        }
+
+        return child;
     }
 }
