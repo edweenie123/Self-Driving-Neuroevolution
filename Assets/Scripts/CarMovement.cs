@@ -5,6 +5,7 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour
 {
     public GameObject laserLinePrefab;
+    public GameObject deathEffect;
 
     Vector3 lastPosition;
     Vector3 startPosition, startRotation;
@@ -48,11 +49,18 @@ public class CarMovement : MonoBehaviour
     {
         if (other.transform.tag == "wall")
         {
-            isDead = true;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            gameObject.GetComponent<BoxCollider>().enabled = false;
+            if (!isDead) {
+                isDead = true;
+                gameObject.GetComponent<MeshRenderer>().enabled = false;
+                gameObject.GetComponent<BoxCollider>().enabled = false;
+                Instantiate(deathEffect, transform.position, Quaternion.identity);
+            }
         }
     }
+
+
+    
+
 
     void InitializeSensorLines()
     {
