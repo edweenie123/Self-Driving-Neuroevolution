@@ -23,8 +23,8 @@ public class objectPlacement : MonoBehaviour
             moveObject();
             mouseWheel();
             releaseClick();
-            lengthChange();
             heightChange();
+            heightDecrease();
         }
     }
 
@@ -33,7 +33,7 @@ public class objectPlacement : MonoBehaviour
         
         if(Input.GetKeyDown(KeyCode.S)) {
             factor +=1;
-            currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z + factor);
+            currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x + factor, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z);
         }
 
         if(Input.GetKeyUp(KeyCode.S)) {
@@ -41,17 +41,20 @@ public class objectPlacement : MonoBehaviour
         }
     }
 
-    private void lengthChange() {
+    private void heightDecrease() {
         int factor = 0;
         
         if(Input.GetKeyDown(KeyCode.D)) {
-            factor +=1;
+            if(currentPlaceObject.transform.localScale.x + factor == 0) {
+                factor = 0;
+            }
+            else {
+                factor -=1;
+            }
+            
             currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x + factor, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z);
         }
 
-        if(Input.GetKeyUp(KeyCode.D)) {
-            factor += 1;
-        }
     }
     private void releaseClick() {
         if(Input.GetMouseButtonDown(0)) {
