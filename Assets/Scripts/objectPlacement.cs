@@ -23,10 +23,36 @@ public class objectPlacement : MonoBehaviour
             moveObject();
             mouseWheel();
             releaseClick();
+            lengthChange();
+            heightChange();
         }
     }
 
+    private void heightChange() {
+        int factor = 0;
+        
+        if(Input.GetKeyDown(KeyCode.S)) {
+            factor +=1;
+            currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z + factor);
+        }
 
+        if(Input.GetKeyUp(KeyCode.S)) {
+            factor += 1;
+        }
+    }
+
+    private void lengthChange() {
+        int factor = 0;
+        
+        if(Input.GetKeyDown(KeyCode.D)) {
+            factor +=1;
+            currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x + factor, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z);
+        }
+
+        if(Input.GetKeyUp(KeyCode.D)) {
+            factor += 1;
+        }
+    }
     private void releaseClick() {
         if(Input.GetMouseButtonDown(0)) {
             currentPlaceObject = null;
