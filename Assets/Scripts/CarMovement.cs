@@ -36,7 +36,6 @@ public class CarMovement : MonoBehaviour
 
     private void Start()
     {
-        
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
         startRotation = transform.eulerAngles;
@@ -56,6 +55,7 @@ public class CarMovement : MonoBehaviour
     {
         if (!isDead)
         {   
+            print(fitness);
             isDead = true;
             // make invisible
             gameObject.GetComponent<MeshRenderer>().enabled = false;
@@ -80,7 +80,7 @@ public class CarMovement : MonoBehaviour
         totalDistance += Vector3.Distance(transform.position, lastPosition);
         lastPosition = transform.position;
 
-        fitness = totalDistance * totalDistance;
+        fitness = totalDistance * totalDistance * totalDistance;
     }
 
     void InitializeSensorLines()

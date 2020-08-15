@@ -7,10 +7,10 @@ using System.Linq;
 
 public class NeuralNetwork : MonoBehaviour
 {
-    public int inputSize = 4;
-    public int hiddenLayerCnt = 1;
-    public int hiddenNeuronCnt = 10;
-    
+    public int inputSize = 3;
+    int hiddenLayerCnt = 1;
+    int hiddenNeuronCnt = 6;
+
     public Matrix<float> inputLayer;
     public List<Matrix<float>> hiddenLayers = new List<Matrix<float>>();
     public Matrix<float> outputLayer = Matrix<float>.Build.Dense(1, 2);
@@ -41,12 +41,13 @@ public class NeuralNetwork : MonoBehaviour
             hiddenLayers.Add(f);
 
             // add weight matrix from current layer to next hidden layer
-            if (i != hiddenLayerCnt-1) {
+            if (i != hiddenLayerCnt - 1)
+            {
                 Matrix<float> hiddenToHidden = Matrix<float>.Build.Dense(hiddenNeuronCnt, hiddenNeuronCnt);
                 weights.Add(hiddenToHidden);
             }
         }
-    
+
         // initalize bias matrix for hidden layers
         for (int i = 0; i < hiddenLayerCnt; i++)
         {
@@ -78,7 +79,7 @@ public class NeuralNetwork : MonoBehaviour
     }
 
     // sets neural network's weights to be identical to nn
-    public void SetWeights(NeuralNetwork nn) 
+    public void SetWeights(NeuralNetwork nn)
     {
         for (int i = 0; i < biases.Count; i++)
             for (int j = 0; j < biases[i].ColumnCount; j++)
@@ -98,16 +99,17 @@ public class NeuralNetwork : MonoBehaviour
         inputLayer = inputLayer.PointwiseTanh();
 
         // propogate the values through the hidden layers if they exist
-        if (hiddenLayers.Count > 0) {
+        if (hiddenLayers.Count > 0)
+        {
             hiddenLayers[0] = (inputLayer * weights[0] + biases[0]).PointwiseTanh();
             for (int i = 1; i < hiddenLayers.Count; i++)
                 hiddenLayers[i] = (hiddenLayers[i - 1] * weights[i] + biases[i]).PointwiseTanh();
         }
-        
+
         // propgate the values to the output layer from either the last hidden layer of the input layer (if there are no hidden layers)
         if (hiddenLayers.Count > 0) outputLayer = (hiddenLayers.Last() * weights.Last() + biases.Last()).PointwiseTanh();
         else outputLayer = (inputLayer * weights.Last() + biases.Last()).PointwiseTanh();
-        
+
         // get accerlation and rotation values from the output layer
         float acceleration = sigmoid(outputLayer[0, 0]);
         float rotation = outputLayer[0, 1];
@@ -118,6 +120,23 @@ public class NeuralNetwork : MonoBehaviour
     float sigmoid(float k)
     {
         return 1f / (1 + Mathf.Exp(-k));
+    }
+
+    public void Mutate()
+    {
+        float mutationRate = PopulationManager.mutationRate;
+        
+        for (int i = 0; i < biases.Count; i++)
+            for (int j = 0; j < biases[i].ColumnCount; j++)
+                if (Random.Range(0f, 1f) < mutationRate) 
+                    biases[i][0, j] = Random.Range(-1f, 1f);
+
+        // randomize the value for every weight
+        for (int i = 0; i < weights.Count; i++)
+            for (int j = 0; j < weights[i].RowCount; j++)
+                for (int k = 0; k < weights[i].ColumnCount; k++)
+                    if (Random.Range(0f, 1f) < mutationRate) 
+                        weights[i][j, k] = Random.Range(-1f, 1f);
     }
 
 }

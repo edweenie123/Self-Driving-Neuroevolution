@@ -7,7 +7,7 @@ public class PopulationManager : MonoBehaviour
     public GameObject carPrefab;
     public Vector3 startPosition;
 
-    int populationSize = 15;
+    int populationSize = 25;
     float populationTime = 25f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
@@ -20,7 +20,7 @@ public class PopulationManager : MonoBehaviour
     List<float> matingPool = new List<float>();
     float matingPoolSum; // sum of all fitnesses in mating pool
 
-    float mutationRate = 0.03f;
+    public static float mutationRate = 0.1f;
 
     void Start()
     {
@@ -61,14 +61,14 @@ public class PopulationManager : MonoBehaviour
         return allDead;
     }
 
-    void CreateStartingGeneration() 
+    void CreateStartingGeneration()
     {
         for (int i = 0; i < populationSize; i++)
         {
             // instantiate a car and set it's neural network weights to be equal to the child's
             GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
             NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
-            
+
             childNetwork.InitializeNetwork();
             childNetwork.RandomizeWeights();
 
@@ -86,14 +86,22 @@ public class PopulationManager : MonoBehaviour
         lastGeneration.Clear();
         foreach (var c in currentGeneration) lastGeneration.Add(c);
 
-        CreateMatingPool();
 
         // destroy everything in the last generation
         foreach (var c in currentGeneration) Destroy(c);
         currentGeneration.Clear();
 
+        CreateMatingPool();
+
+        NeuralNetwork bestInPopulation = GetBestMemberInPopulation();
+        GameObject bestT = Instantiate(carPrefab, startPosition, Quaternion.identity);
+        NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
+        bestTNetwork.InitializeNetwork();
+        bestTNetwork.SetWeights(bestInPopulation);
+        currentGeneration.Add(bestT);
+
         // generate the new generation
-        for (int i = 0; i < populationSize; i++)
+        for (int i = 0; i < populationSize - 1; i++)
         {
             // find two parents (probability based off fitness) and make a child using crossover
             NeuralNetwork parentA = SelectParent();
@@ -103,9 +111,11 @@ public class PopulationManager : MonoBehaviour
             // instantiate a car and set it's neural network weights to be equal to the child's
             GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
             NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
-            
+
+
             childNetwork.InitializeNetwork();
             childNetwork.SetWeights(crossoverChild);
+            childNetwork.Mutate(); // mutate the child a little
 
             currentGeneration.Add(t);
         }
@@ -127,6 +137,21 @@ public class PopulationManager : MonoBehaviour
             matingPool.Add(carFitness);
             matingPoolSum += carFitness;
         }
+    }
+
+    NeuralNetwork GetBestMemberInPopulation()
+    {
+        float bestFitness = 0f;
+        int bestIdx = 0;
+        for (int i = 0; i < populationSize; i++)
+        {
+            if (matingPool[i] > bestFitness) {
+                bestFitness = matingPool[i];
+                bestIdx = i;
+            }
+        }
+
+        return lastGeneration[bestIdx].GetComponent<NeuralNetwork>();
     }
 
     // selects a parent based off the mating pool
