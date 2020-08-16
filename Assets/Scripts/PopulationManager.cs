@@ -108,7 +108,6 @@ public class PopulationManager : MonoBehaviour
         // generate the new generation
         for (int i = 0; i < populationSize-1; i++)
         {
-            print("testing");
             // find two parents (probability based off fitness) and make a child using crossover
             NeuralNetwork parentA = SelectParent();
             NeuralNetwork parentB = SelectParent();
@@ -184,7 +183,9 @@ public class PopulationManager : MonoBehaviour
     // takes two parents A and B => returns set's the weights of child
     NeuralNetwork Crossover(NeuralNetwork A, NeuralNetwork B)
     {
-        NeuralNetwork child = new NeuralNetwork();
+        Destroy(GetComponent<NeuralNetwork>());
+
+        NeuralNetwork child = gameObject.AddComponent<NeuralNetwork>();
         child.InitializeNetwork();
 
         // equal chance of having either parent's biases
