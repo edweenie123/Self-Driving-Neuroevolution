@@ -677,7 +677,7 @@ GameObject:
   m_Component:
   - component: {fileID: 596204250}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: CarHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -691,7 +691,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 596204249}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 17.16, y: 0, z: 1.1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2622,6 +2622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPrefab: {fileID: 5687182246294279894, guid: a685846e46b3b7746a7d91205ed9d9e4,
     type: 3}
+  carHolder: {fileID: 596204249}
   startPosition: {x: -17, y: 0.325, z: -1.23}
   averageFitnesses: []
 --- !u!4 &1985048981

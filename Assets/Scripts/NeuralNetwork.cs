@@ -9,7 +9,7 @@ public class NeuralNetwork : MonoBehaviour
 {
     public int inputSize = 3;
     int hiddenLayerCnt = 1;
-    int hiddenNeuronCnt = 8;
+    int hiddenNeuronCnt = 5;
 
     public Matrix<float> inputLayer;
     public List<Matrix<float>> hiddenLayers = new List<Matrix<float>>();
@@ -122,13 +122,42 @@ public class NeuralNetwork : MonoBehaviour
         return 1f / (1 + Mathf.Exp(-k));
     }
 
+    // takes two parents A and B => makes weights the crossover of A and B
+    public void Crossover(NeuralNetwork A, NeuralNetwork B)
+    {
+        for (int i = 0; i < biases.Count; i++)
+        {
+            for (int j = 0; j < biases[i].ColumnCount; j++)
+            {
+                if (Random.Range(0f, 1f) > 0f) biases[i][0, j] = A.biases[i][0, j];
+                else biases[i][0, j] = B.biases[i][0, j];
+            }
+        }
+
+        // equal chance of having either parent's weights 
+        for (int i = 0; i < weights.Count; i++)
+        {
+            for (int j = 0; j < weights[i].RowCount; j++)
+            {
+                for (int k = 0; k < weights[i].ColumnCount; k++)
+                {
+                    // weights[i][j, k] = Random.Range(-1f, 1f);
+                    if (Random.Range(0f, 1f) > 0f) weights[i][j, k] = A.weights[i][j, k];
+                    else weights[i][j, k] = B.weights[i][j, k];
+                }
+            }
+        }
+    }
+
+
     public void Mutate()
     {
         float mutationRate = PopulationManager.mutationRate;
-        
+
         for (int i = 0; i < biases.Count; i++)
             for (int j = 0; j < biases[i].ColumnCount; j++)
-                if (Random.Range(0f, 1f) < mutationRate) {
+                if (Random.Range(0f, 1f) < mutationRate)
+                {
                     float rand = Random.Range(-1f, 1f);
                     biases[i][0, j] += rand;
                     biases[i][0, j] = Mathf.Clamp(biases[i][0, j], -1f, 1f);
@@ -138,12 +167,14 @@ public class NeuralNetwork : MonoBehaviour
         for (int i = 0; i < weights.Count; i++)
             for (int j = 0; j < weights[i].RowCount; j++)
                 for (int k = 0; k < weights[i].ColumnCount; k++)
-                    if (Random.Range(0f, 1f) < mutationRate) {
+                    if (Random.Range(0f, 1f) < mutationRate)
+                    {
                         float rand = Random.Range(-1f, 1f);
                         weights[i][j, k] += rand;
                         weights[i][j, k] = Mathf.Clamp(weights[i][j, k], -1f, 1f);
 
                     }
     }
+
 
 }

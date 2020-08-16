@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MathNet.Numerics.LinearAlgebra;
 using UnityEngine;
+using System.Linq;
+
 
 public class PopulationManager : MonoBehaviour
 {
     public GameObject carPrefab;
+    public GameObject carHolder;
     public Vector3 startPosition;
+
+    // public GameObject bestNNHolder;
 
     int populationSize = 20;
     float populationTime = 25f;
@@ -15,8 +21,9 @@ public class PopulationManager : MonoBehaviour
 
     int generationNumber = 1;
 
-    List<GameObject> lastGeneration = new List<GameObject>();
-    List<GameObject> currentGeneration = new List<GameObject>();
+    List<NeuralNetwork> lastGeneration = new List<NeuralNetwork>();
+    List<NeuralNetwork> currentGeneration = new List<NeuralNetwork>();
+    // List<List<GameObject>> generations = new List<List<GameObject>>();
     List<float> matingPool = new List<float>();
 
     public List<float> averageFitnesses = new List<float>();
@@ -26,6 +33,9 @@ public class PopulationManager : MonoBehaviour
 
     void Start()
     {
+        lastGeneration = new List<NeuralNetwork>();
+        currentGeneration = new List<NeuralNetwork>();
+
         CreateStartingGeneration();
     }
 
@@ -65,6 +75,8 @@ public class PopulationManager : MonoBehaviour
 
     void CreateStartingGeneration()
     {
+        currentGeneration.Clear();
+
         for (int i = 0; i < populationSize; i++)
         {
             // instantiate a car and set it's neural network weights to be equal to the child's
@@ -74,7 +86,7 @@ public class PopulationManager : MonoBehaviour
             childNetwork.InitializeNetwork();
             childNetwork.RandomizeWeights();
 
-            currentGeneration.Add(t);
+            currentGeneration.Add(childNetwork);
         }
 
         // update the generation text ui
@@ -84,46 +96,55 @@ public class PopulationManager : MonoBehaviour
 
     void CreateNewGeneration()
     {
+        timer2 = 0;
+        
         // add all elements from the current generation array to the last generation array
         lastGeneration.Clear();
         foreach (var c in currentGeneration) lastGeneration.Add(c);
 
-        timer2 = 0;
+
+        
+        CreateMatingPool();
+        
+        // THIS DOESN'T WORK AND IDK WHY
+        NeuralNetwork bestNN = GetBestMemberInPopulation();
+        
         // destroy everything in the last generation
-        foreach (var c in currentGeneration) Destroy(c);
+        foreach (var c in currentGeneration) Destroy(c.gameObject);
         currentGeneration.Clear();
 
-        CreateMatingPool();
-
-        averageFitnesses.Add(matingPoolSum / (float)populationSize);
-
-        // THIS DOESN'T WORK AND IDK WHY
-        NeuralNetwork bestInPopulation = GetBestMemberInPopulation();
-        GameObject bestT = Instantiate(carPrefab, startPosition, Quaternion.identity);
-        NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
-        bestTNetwork.InitializeNetwork();
-        bestTNetwork.SetWeights(bestInPopulation);
-        currentGeneration.Add(bestT);
 
         // generate the new generation
-        for (int i = 0; i < populationSize-1; i++)
+        for (int i = 0; i < populationSize; i++)
         {
-            // find two parents (probability based off fitness) and make a child using crossover
-            NeuralNetwork parentA = SelectParent();
-            NeuralNetwork parentB = SelectParent();
-            NeuralNetwork crossoverChild = Crossover(parentA, parentB);
+            if (i==1) {
+                GameObject bestT = Instantiate(carPrefab, startPosition, Quaternion.identity);
+                NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
+                bestTNetwork.InitializeNetwork();
+                bestTNetwork.SetWeights(bestNN);
+                bestT.GetComponent<CarMovement>().isTheBoi = 100;
+                currentGeneration.Add(bestTNetwork);
+            } else {
+                // find two parents (probability based off fitness) and make a child using crossover
+                NeuralNetwork parentA = SelectParent();
+                NeuralNetwork parentB = SelectParent();
 
-            // instantiate a car and set it's neural network weights to be equal to the child's
-            GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
-            NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
+                // instantiate a car and set it's neural network weights to be equal to the crossover of A and B
+                GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
+                // t.transform.parent = carHolder.transform; 
+                NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
 
+                childNetwork.InitializeNetwork();
+                childNetwork.Crossover(parentA, parentB);
+                childNetwork.Mutate(); // mutate the child a little
+                
+                currentGeneration.Add(childNetwork);
 
-            childNetwork.InitializeNetwork();
-            childNetwork.SetWeights(crossoverChild);
-            childNetwork.Mutate(); // mutate the child a little
+            }
 
-            currentGeneration.Add(t);
         }
+
+
 
         // update the generation text ui
         UIManager.EditText(UIManager.generationText, "Generation: " + generationNumber);
@@ -138,7 +159,7 @@ public class PopulationManager : MonoBehaviour
         // add every fitness to the mating pool and update the mating pool sum
         foreach (var c in lastGeneration)
         {
-            float carFitness = c.GetComponent<CarMovement>().fitness;
+            float carFitness = c.gameObject.GetComponent<CarMovement>().fitness;
             matingPool.Add(carFitness);
             matingPoolSum += carFitness;
         }
@@ -148,6 +169,8 @@ public class PopulationManager : MonoBehaviour
     {
         float bestFitness = 0f;
         int bestIdx = 0;
+
+
         for (int i = 0; i < populationSize; i++)
         {
             if (matingPool[i] > bestFitness) {
@@ -155,10 +178,12 @@ public class PopulationManager : MonoBehaviour
                 bestIdx = i;
             }
         }
+       
+        averageFitnesses.Add(bestFitness);
 
-        print("best boi here is " + bestIdx + "with fitness of " + bestFitness);
+        print("best boi here is " + bestIdx + " with fitness of " + bestFitness);
 
-        return lastGeneration[bestIdx].GetComponent<NeuralNetwork>();
+        return lastGeneration[bestIdx];
     }
 
     // selects a parent based off the mating pool
@@ -178,51 +203,5 @@ public class PopulationManager : MonoBehaviour
         // print("big problem boi");
         // we will never reach this point (probably)
         return null;
-    }
-
-    // takes two parents A and B => returns set's the weights of child
-    NeuralNetwork Crossover(NeuralNetwork A, NeuralNetwork B)
-    {
-        Destroy(GetComponent<NeuralNetwork>());
-
-        NeuralNetwork child = gameObject.AddComponent<NeuralNetwork>();
-        child.InitializeNetwork();
-
-        // equal chance of having either parent's biases
-        for (int i = 0; i < child.biases.Count; i++)
-        {
-            for (int j = 0; j < child.biases[i].ColumnCount; j++)
-            {
-                if (Random.Range(0f, 1f) > 0f) child.biases[i][0, j] = A.biases[i][0, j];
-                else child.biases[i][0, j] = B.biases[i][0, j];
-            }
-            // if (Random.Range(0f, 1f) > 0.5f) {
-            //     child.biases[i] = A.biases[i];
-            // } else {
-            //     child.biases[i] = B.biases[i];
-            // }
-        }
-
-        // equal chance of having either parent's weights 
-        for (int i = 0; i < child.weights.Count; i++)
-        {
-            for (int j = 0; j < child.weights[i].RowCount; j++)
-            {
-                for (int k = 0; k < child.weights[i].ColumnCount; k++)
-                {
-                    child.weights[i][j, k] = Random.Range(-1f, 1f);
-                    if (Random.Range(0f, 1f) > 0f) child.weights[i][j, k] = A.weights[i][j, k];
-                    else child.weights[i][j, k] = B.weights[i][j, k];
-                }
-            }
-
-            // if (Random.Range(0f, 1f) > 0.5f) {
-            //     child.weights[i] = A.weights[i];
-            // } else {
-            //     child.weights[i] = B.weights[i];
-            // }
-        }
-
-        return child;
     }
 }

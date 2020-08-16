@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
+    public float id;
+    public float isTheBoi = -1;
+    
     public GameObject laserLinePrefab;
     public GameObject deathEffect;
 
@@ -50,20 +53,26 @@ public class CarMovement : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         if (other.transform.tag == "wall") Die();
+
+        if (other.transform.tag == "car") {
+            Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), other.collider);
+        }
     }
 
     void Die()
     {
         if (!isDead)
         {   
+            fitness = totalDistance * totalDistance;
             // print(fitness);
             isDead = true;
+
             // make invisible
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             gameObject.GetComponent<BoxCollider>().enabled = false;
 
             // particle effect
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
+            // Instantiate(deathEffect, transform.position, Quaternion.identity);
 
             // make the sensor lines invisible
             foreach (var line in sensorLines)
@@ -78,10 +87,12 @@ public class CarMovement : MonoBehaviour
     {
         // timeSinceStart += Time.deltaTime;
 
+        id = network.biases[0][0, 0];
+
         totalDistance += Vector3.Distance(transform.position, lastPosition);
         lastPosition = transform.position;
 
-        fitness = totalDistance * totalDistance;        
+        // fitness = totalDistance * totalDistance;        
     }
 
     void InitializeSensorLines()
@@ -162,20 +173,20 @@ public class CarMovement : MonoBehaviour
         if (!isDead)
         {
             timer += Time.deltaTime;
-            // timer2 += Time.deltaTime;
+            timer2 += Time.deltaTime;
 
-            // if (timer2 > 0.1f) 
+            if (timer2 > 0.1f) {
                 UpdateFitness();
-                // timer2 = 0;
-            // }
+                timer2 = 0;
+            }
 
             UpdateSensors();
 
-            // if (timer > feedForwardInterval)
-            // {
+            if (timer > feedForwardInterval)
+            {
                 (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
                 timer = 0;
-            // }
+            }
 
             MoveCar(accel, rotationAngle);
         }
