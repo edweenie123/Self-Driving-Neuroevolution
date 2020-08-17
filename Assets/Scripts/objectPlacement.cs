@@ -70,8 +70,13 @@ public class objectPlacement : MonoBehaviour
 
         RaycastHit hitInfo;
 
-        if(Physics.Raycast(ray, out hitInfo)) {
-            currentPlaceObject.transform.position = hitInfo.point;
+        if(Physics.Raycast(ray, out hitInfo, 1000f, 1 << LayerMask.NameToLayer("planeLayer"))) {
+            Vector3 wallLocation = hitInfo.point;
+            
+            // adjust the wall position based off its height (so half the wall isn't beneath the plane)
+            wallLocation += new Vector3(0, currentPlaceObject.transform.localScale.y / 2f, 0);
+            
+            currentPlaceObject.transform.position = wallLocation;
         }
 
     }

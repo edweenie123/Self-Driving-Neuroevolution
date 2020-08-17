@@ -11,8 +11,6 @@ public class PopulationManager : MonoBehaviour
     public GameObject carHolder;
     public Vector3 startPosition;
 
-    // public GameObject bestNNHolder;
-
     int populationSize = 50;
     float populationTime = 100f;
     float checkAllDeadInterval = 0.5f;
@@ -23,13 +21,12 @@ public class PopulationManager : MonoBehaviour
 
     List<NeuralNetwork> lastGeneration = new List<NeuralNetwork>();
     List<NeuralNetwork> currentGeneration = new List<NeuralNetwork>();
-    // List<List<GameObject>> generations = new List<List<GameObject>>();
     public List<float> matingPool;
 
     public List<float> averageFitnesses = new List<float>();
     float matingPoolSum; // sum of all fitnesses in mating pool
 
-    public static float mutationRate = 0.05f;
+    public static float mutationRate = 0.07f;
     // public static float mutationMagnitude = 0.15f;
 
     void Start()
@@ -104,22 +101,8 @@ public class PopulationManager : MonoBehaviour
         lastGeneration.Clear();
         foreach (var c in currentGeneration) lastGeneration.Add(c);
 
-
-        
         CreateMatingPool();
-
-        // print("printnig mating pool");
-        // foreach (var m in matingPool) {
-        //     print(m);
-        // }
-        
-        // THIS DOESN'T WORK AND IDK WHY
         NeuralNetwork bestNN = GetBestMemberInPopulation();
-
-        // print("bestNN weights");
-        // print(bestNN.weights[0]);
-        // print(bestNN.weights[1]);
-        
         
         // destroy everything in the last generation
         foreach (var c in currentGeneration) Destroy(c.gameObject);
@@ -148,14 +131,11 @@ public class PopulationManager : MonoBehaviour
                 childNetwork.InitializeNetwork();
                 childNetwork.Crossover(parentA, parentB);
                 childNetwork.Mutate(); // mutate the child a little
-                // childNetwork.RandomizeWeights();
                 currentGeneration.Add(childNetwork);
 
             }
 
         }
-
-
 
         // update the generation text ui
         UIManager.EditText(UIManager.generationText, "Generation: " + generationNumber);
@@ -191,8 +171,6 @@ public class PopulationManager : MonoBehaviour
        
         averageFitnesses.Add(bestFitness);
 
-        // print("best boi here is " + bestIdx + " with fitness of " + bestFitness);
-
         return lastGeneration[bestIdx];
     }
 
@@ -210,7 +188,6 @@ public class PopulationManager : MonoBehaviour
                 return lastGeneration[i].GetComponent<NeuralNetwork>();
         }
 
-        // print("big problem boi");
         // we will never reach this point (probably)
         return null;
     }
