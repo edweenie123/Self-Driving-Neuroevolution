@@ -63,7 +63,6 @@ public class CarMovement : MonoBehaviour
     {
         if (!isDead)
         {   
-            fitness = totalDistance * totalDistance;
             // print(fitness);
             isDead = true;
 
@@ -72,7 +71,7 @@ public class CarMovement : MonoBehaviour
             gameObject.GetComponent<BoxCollider>().enabled = false;
 
             // particle effect
-            // Instantiate(deathEffect, transform.position, Quaternion.identity);
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
 
             // make the sensor lines invisible
             foreach (var line in sensorLines)
@@ -87,12 +86,12 @@ public class CarMovement : MonoBehaviour
     {
         // timeSinceStart += Time.deltaTime;
 
-        id = network.biases[0][0, 0];
+        id = network.weights[0][0, 0];
 
         totalDistance += Vector3.Distance(transform.position, lastPosition);
         lastPosition = transform.position;
 
-        // fitness = totalDistance * totalDistance;        
+        fitness = totalDistance * totalDistance;        
     }
 
     void InitializeSensorLines()
@@ -119,7 +118,7 @@ public class CarMovement : MonoBehaviour
         {
             r = new Ray(transform.position, sensorVectors[i]);
 
-            if (Physics.Raycast(r, out hit))
+            if (Physics.Raycast(r, out hit, 1000f, 1 << LayerMask.NameToLayer("wallLayer")))
             {
                 sensorDistances.Add(hit.distance / 10f);
 

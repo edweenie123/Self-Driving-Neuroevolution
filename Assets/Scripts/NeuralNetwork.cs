@@ -153,6 +153,7 @@ public class NeuralNetwork : MonoBehaviour
     public void Mutate()
     {
         float mutationRate = PopulationManager.mutationRate;
+        // float mutationMagnitude = op
 
         for (int i = 0; i < biases.Count; i++)
             for (int j = 0; j < biases[i].ColumnCount; j++)

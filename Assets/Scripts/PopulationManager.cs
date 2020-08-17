@@ -13,8 +13,8 @@ public class PopulationManager : MonoBehaviour
 
     // public GameObject bestNNHolder;
 
-    int populationSize = 20;
-    float populationTime = 25f;
+    int populationSize = 50;
+    float populationTime = 100f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
     float timer2 = 0;
@@ -24,15 +24,17 @@ public class PopulationManager : MonoBehaviour
     List<NeuralNetwork> lastGeneration = new List<NeuralNetwork>();
     List<NeuralNetwork> currentGeneration = new List<NeuralNetwork>();
     // List<List<GameObject>> generations = new List<List<GameObject>>();
-    List<float> matingPool = new List<float>();
+    public List<float> matingPool;
 
     public List<float> averageFitnesses = new List<float>();
     float matingPoolSum; // sum of all fitnesses in mating pool
 
     public static float mutationRate = 0.05f;
+    // public static float mutationMagnitude = 0.15f;
 
     void Start()
     {
+        matingPool = new List<float>();
         lastGeneration = new List<NeuralNetwork>();
         currentGeneration = new List<NeuralNetwork>();
 
@@ -97,7 +99,7 @@ public class PopulationManager : MonoBehaviour
     void CreateNewGeneration()
     {
         timer2 = 0;
-        
+
         // add all elements from the current generation array to the last generation array
         lastGeneration.Clear();
         foreach (var c in currentGeneration) lastGeneration.Add(c);
@@ -105,9 +107,19 @@ public class PopulationManager : MonoBehaviour
 
         
         CreateMatingPool();
+
+        // print("printnig mating pool");
+        // foreach (var m in matingPool) {
+        //     print(m);
+        // }
         
         // THIS DOESN'T WORK AND IDK WHY
         NeuralNetwork bestNN = GetBestMemberInPopulation();
+
+        // print("bestNN weights");
+        // print(bestNN.weights[0]);
+        // print(bestNN.weights[1]);
+        
         
         // destroy everything in the last generation
         foreach (var c in currentGeneration) Destroy(c.gameObject);
@@ -117,7 +129,7 @@ public class PopulationManager : MonoBehaviour
         // generate the new generation
         for (int i = 0; i < populationSize; i++)
         {
-            if (i==1) {
+            if (i==0) {
                 GameObject bestT = Instantiate(carPrefab, startPosition, Quaternion.identity);
                 NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
                 bestTNetwork.InitializeNetwork();
@@ -137,7 +149,7 @@ public class PopulationManager : MonoBehaviour
                 childNetwork.InitializeNetwork();
                 childNetwork.Crossover(parentA, parentB);
                 childNetwork.Mutate(); // mutate the child a little
-                
+                // childNetwork.RandomizeWeights();
                 currentGeneration.Add(childNetwork);
 
             }
@@ -170,7 +182,6 @@ public class PopulationManager : MonoBehaviour
         float bestFitness = 0f;
         int bestIdx = 0;
 
-
         for (int i = 0; i < populationSize; i++)
         {
             if (matingPool[i] > bestFitness) {
@@ -181,7 +192,7 @@ public class PopulationManager : MonoBehaviour
        
         averageFitnesses.Add(bestFitness);
 
-        print("best boi here is " + bestIdx + " with fitness of " + bestFitness);
+        // print("best boi here is " + bestIdx + " with fitness of " + bestFitness);
 
         return lastGeneration[bestIdx];
     }
