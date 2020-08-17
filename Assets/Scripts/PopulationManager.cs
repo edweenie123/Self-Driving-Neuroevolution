@@ -11,7 +11,7 @@ public class PopulationManager : MonoBehaviour
     public GameObject carHolder;
     public Vector3 startPosition;
 
-    int populationSize = 50;
+    int populationSize = 35;
     float populationTime = 100f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
