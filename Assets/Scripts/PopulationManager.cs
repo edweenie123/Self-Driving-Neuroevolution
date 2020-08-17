@@ -143,7 +143,6 @@ public class PopulationManager : MonoBehaviour
 
                 // instantiate a car and set it's neural network weights to be equal to the crossover of A and B
                 GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
-                // t.transform.parent = carHolder.transform; 
                 NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
 
                 childNetwork.InitializeNetwork();

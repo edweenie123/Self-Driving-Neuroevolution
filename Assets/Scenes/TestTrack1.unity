@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 296165787}
   - component: {fileID: 296165786}
   - component: {fileID: 296165785}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (5)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 583830902}
   - component: {fileID: 583830901}
   - component: {fileID: 583830900}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (7)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -493,7 +493,7 @@ GameObject:
   - component: {fileID: 596590045}
   - component: {fileID: 596590044}
   - component: {fileID: 596590043}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -716,7 +716,7 @@ GameObject:
   - component: {fileID: 795375048}
   - component: {fileID: 795375047}
   - component: {fileID: 795375046}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (3)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -992,7 +992,7 @@ GameObject:
   - component: {fileID: 1426278264}
   - component: {fileID: 1426278263}
   - component: {fileID: 1426278262}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (1)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -1085,7 +1085,7 @@ GameObject:
   - component: {fileID: 1517015186}
   - component: {fileID: 1517015185}
   - component: {fileID: 1517015184}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (6)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -1256,7 +1256,7 @@ GameObject:
   - component: {fileID: 1680273952}
   - component: {fileID: 1680273951}
   - component: {fileID: 1680273950}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (2)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -1349,7 +1349,7 @@ GameObject:
   - component: {fileID: 1907460481}
   - component: {fileID: 1907460480}
   - component: {fileID: 1907460479}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube (4)
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -1464,8 +1464,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carPrefab: {fileID: 5687182246294279894, guid: a685846e46b3b7746a7d91205ed9d9e4,
     type: 3}
+  carHolder: {fileID: 0}
   startPosition: {x: -8.76, y: 0.325, z: -1.23}
-  timer: 0
+  matingPool: []
+  averageFitnesses: []
 --- !u!4 &1985048981
 Transform:
   m_ObjectHideFlags: 0
