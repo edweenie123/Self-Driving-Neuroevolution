@@ -1443,6 +1443,7 @@ GameObject:
   - component: {fileID: 1985048982}
   - component: {fileID: 1985048983}
   - component: {fileID: 1985048984}
+  - component: {fileID: 1985048985}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1519,6 +1520,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c02acf7e6c5b87e40a251d6301f44849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1985048985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1985048979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 780737e6315d9f1429efef7755783617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bestCarMat_: {fileID: 2100000, guid: a120871ecc769ff49889e48eda5f3b3a, type: 2}
 --- !u!1 &2093098072
 GameObject:
   m_ObjectHideFlags: 0

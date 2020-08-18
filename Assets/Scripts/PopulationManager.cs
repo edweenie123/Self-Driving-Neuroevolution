@@ -11,7 +11,7 @@ public class PopulationManager : MonoBehaviour
     public GameObject carHolder;
     public Vector3 startPosition;
 
-    int populationSize = 35;
+    int populationSize = 40;
     float populationTime = 100f;
     float checkAllDeadInterval = 0.5f;
     float timer = 0;
@@ -117,8 +117,9 @@ public class PopulationManager : MonoBehaviour
                 NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
                 bestTNetwork.InitializeNetwork();
                 bestTNetwork.SetWeights(bestNN);
-                bestT.GetComponent<CarMovement>().isTheBoi = 100;
                 currentGeneration.Add(bestTNetwork);
+
+                bestT.GetComponent<CarMovement>().isBestFromLastGen = true;
             } else {
                 // find two parents (probability based off fitness) and make a child using crossover
                 NeuralNetwork parentA = SelectParent();

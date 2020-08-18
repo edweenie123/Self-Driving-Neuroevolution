@@ -150,4 +150,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5186adc7a685fdc44beea1da727157d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputSize: 4
+  inputSize: 5
