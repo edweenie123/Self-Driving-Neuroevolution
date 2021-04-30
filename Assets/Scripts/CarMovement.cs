@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class CarMovement : MonoBehaviour
 {
-    public float id;
-    public float isTheBoi = -1;
-    
+    public bool isBestFromLastGen = false;
+
     public GameObject laserLinePrefab;
     public GameObject deathEffect;
 
@@ -37,7 +36,7 @@ public class CarMovement : MonoBehaviour
 
     float feedForwardInterval = 0.3f; // time between every forward propagation
 
-    private void Start()
+    void Start()
     {
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
@@ -47,22 +46,22 @@ public class CarMovement : MonoBehaviour
 
         numSensors = network.inputSize;
 
+        // change material if car was best from last generation
+        if (isBestFromLastGen) GetComponent<Renderer>().material = MaterialHolder.bestCarMat;
+
+
         InitializeSensorLines();
     }
 
     void OnCollisionEnter(Collision other)
     {
         if (other.transform.tag == "wall") Die();
-
-        if (other.transform.tag == "car") {
-            Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), other.collider);
-        }
     }
 
     void Die()
     {
         if (!isDead)
-        {   
+        {
             // print(fitness);
             isDead = true;
 
@@ -71,7 +70,8 @@ public class CarMovement : MonoBehaviour
             gameObject.GetComponent<BoxCollider>().enabled = false;
 
             // particle effect
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
+            GameObject particle = Instantiate(deathEffect, transform.position, Quaternion.identity);
+            if (isBestFromLastGen) particle.GetComponent<Renderer>().material = MaterialHolder.bestCarMat;
 
             // make the sensor lines invisible
             foreach (var line in sensorLines)
@@ -86,12 +86,12 @@ public class CarMovement : MonoBehaviour
     {
         // timeSinceStart += Time.deltaTime;
 
-        id = network.weights[0][0, 0];
+        // id = network.weights[0][0, 0];
 
         totalDistance += Vector3.Distance(transform.position, lastPosition);
         lastPosition = transform.position;
 
-        fitness = totalDistance * totalDistance;        
+        fitness = totalDistance * totalDistance;
     }
 
     void InitializeSensorLines()
@@ -174,7 +174,8 @@ public class CarMovement : MonoBehaviour
             timer += Time.deltaTime;
             timer2 += Time.deltaTime;
 
-            if (timer2 > 0.1f) {
+            if (timer2 > 0.1f)
+            {
                 UpdateFitness();
                 timer2 = 0;
             }
