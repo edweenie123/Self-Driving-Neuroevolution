@@ -4,90 +4,80 @@ using UnityEngine;
 
 public class objectPlacement : MonoBehaviour
 {
-    // Start is called before the first frame update
-    [SerializeField]
-    private GameObject placePrefab;
-
-    [SerializeField]
-    private KeyCode objectHotkey = KeyCode.A;
+    public GameObject placePrefab;   
+    public KeyCode objectHotkey = KeyCode.A;
+    public KeyCode increaseLenHotkey = KeyCode.D;
+    public KeyCode DecreaseLenHotkey = KeyCode.S;
 
     private GameObject currentPlaceObject;
     private float rotation;
+
+    public float rotateSpeed = 10f;
+    public float changeLenAmount = 1f;
 
     // Update is called once per frame
     void Update()
     {
         handleHotkey();
 
-        if(currentPlaceObject != null) {
+        if (currentPlaceObject != null)
+        {
             moveObject();
             mouseWheel();
             releaseClick();
-            heightChange();
-            heightDecrease();
+            changeWallLen();
         }
     }
 
-    private void heightChange() {
-        int factor = 0;
-        
-        if(Input.GetKeyDown(KeyCode.S)) {
-            factor +=1;
-            currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x + factor, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z);
-        }
-
-        if(Input.GetKeyUp(KeyCode.S)) {
-            factor += 1;
-        }
+    void changeWallLen() 
+    {
+        if (Input.GetKeyDown(increaseLenHotkey)) 
+            currentPlaceObject.transform.localScale += new Vector3(changeLenAmount, 0, 0);
+        else if (Input.GetKeyDown(DecreaseLenHotkey))
+            if (currentPlaceObject.transform.localScale.x > 2 * changeLenAmount)
+                currentPlaceObject.transform.localScale += new Vector3(-changeLenAmount, 0, 0);
     }
 
-    private void heightDecrease() {
-        int factor = 0;
-        
-        if(Input.GetKeyDown(KeyCode.D)) {
-            if(currentPlaceObject.transform.localScale.x + factor == 0) {
-                factor = 0;
-            }
-            else {
-                factor -=1;
-            }
-            
-            currentPlaceObject.transform.localScale = new Vector3 (currentPlaceObject.transform.localScale.x + factor, currentPlaceObject.transform.localScale.y, currentPlaceObject.transform.localScale.z);
-        }
-
-    }
-    private void releaseClick() {
-        if(Input.GetMouseButtonDown(0)) {
+    private void releaseClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
             currentPlaceObject = null;
         }
     }
-    private void mouseWheel() {
+    
+    // rotate the object using mouse wheel
+    private void mouseWheel()
+    {
         rotation = Input.mouseScrollDelta.y;
-        currentPlaceObject.transform.Rotate(Vector3.up, rotation * 10f);
+        currentPlaceObject.transform.Rotate(Vector3.up, rotation * rotateSpeed);
     }
-    private void moveObject() {
+
+    private void moveObject()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hitInfo;
 
-        if(Physics.Raycast(ray, out hitInfo, 1000f, 1 << LayerMask.NameToLayer("planeLayer"))) {
+        if (Physics.Raycast(ray, out hitInfo, 1000f, 1 << LayerMask.NameToLayer("planeLayer")))
+        {
             Vector3 wallLocation = hitInfo.point;
-            
+
             // adjust the wall position based off its height (so half the wall isn't beneath the plane)
             wallLocation += new Vector3(0, currentPlaceObject.transform.localScale.y / 2f, 0);
-            
+
             currentPlaceObject.transform.position = wallLocation;
         }
 
     }
-    private void handleHotkey() {
-        if(Input.GetKeyDown(objectHotkey)) {
-            if(currentPlaceObject == null) {
-                currentPlaceObject = Instantiate(placePrefab);
-            }
-            else {
-                Destroy(currentPlaceObject);
-            }
+
+    private void handleHotkey()
+    {
+        // create / destroy wall prefab
+        if (Input.GetKeyDown(objectHotkey))
+        {
+            if (currentPlaceObject == null) currentPlaceObject = Instantiate(placePrefab);
+            else Destroy(currentPlaceObject);
         }
     }
 }
