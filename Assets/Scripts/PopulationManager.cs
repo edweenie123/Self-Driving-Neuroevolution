@@ -29,30 +29,38 @@ public class PopulationManager : MonoBehaviour
     public static float mutationRate = 0.07f;
     // public static float mutationMagnitude = 0.15f;
 
+    bool startedYet = false;
+
     void Start()
     {
         matingPool = new List<float>();
         lastGeneration = new List<NeuralNetwork>();
         currentGeneration = new List<NeuralNetwork>();
-
-        CreateStartingGeneration();
     }
 
     void Update()
     {
-        timer += Time.deltaTime;
-        timer2 += Time.deltaTime;
+        if (!GlobalVariables.isPausedEvolution) {
+            if (!startedYet) 
+            {
+                startedYet = true;
+                CreateStartingGeneration();
+            }
 
-        if (timer > checkAllDeadInterval)
-        {
-            if (EntireGenerationDead()) CreateNewGeneration();
-            timer = 0;
-        }
+            timer += Time.deltaTime;
+            timer2 += Time.deltaTime;
 
-        if (timer2 > populationTime)
-        {
-            CreateNewGeneration();
-            timer2 = 0;
+            if (timer > checkAllDeadInterval)
+            {
+                if (EntireGenerationDead()) CreateNewGeneration();
+                timer = 0;
+            }
+
+            if (timer2 > populationTime)
+            {
+                CreateNewGeneration();
+                timer2 = 0;
+            }
         }
     }
 

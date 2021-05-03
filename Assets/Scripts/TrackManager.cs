@@ -5,7 +5,6 @@ using UnityEngine;
 public class TrackManager : MonoBehaviour
 {
     public GameObject track1, track2, track3;
-
     public Transform spawnPoint;
 
     void Start() 

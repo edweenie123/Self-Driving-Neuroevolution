@@ -35,7 +35,6 @@ public class SpawnPoint : MonoBehaviour
                 // select initially
                 else Select();
             }
-            // else Deselect();
         }
     }
 
@@ -45,7 +44,8 @@ public class SpawnPoint : MonoBehaviour
         animator.SetBool("isSelected", true);
     }
 
-    void Deselect() {
+    void Deselect()
+    {
         selected = false;
         animator.SetBool("isSelected", false);
     }
@@ -60,10 +60,9 @@ public class SpawnPoint : MonoBehaviour
 
             if (Physics.Raycast(ray, out hitInfo, 1000f, 1 << LayerMask.NameToLayer("planeLayer")))
             {
-
+                // move the spawn point to the point where the curser hits the plane
                 Vector3 newLoc = hitInfo.point;
-                newLoc += new Vector3(0, transform.localScale.y / 2f, 0);
-
+                newLoc += new Vector3(0, transform.localScale.y / 2f, 0); // apply offset
                 transform.position = newLoc;
             }
         }
