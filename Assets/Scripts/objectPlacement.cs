@@ -22,20 +22,22 @@ public class objectPlacement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleHotkey();
-
-        if (currentPlaceObject != null)
+        if (GlobalVariables.isPausedEvolution)
         {
-            MoveObject();
-            MouseWheel();
-            ReleaseClick();
-            ChangeWallLen();
-        }
-        else
-        {
-            HandleSelection();
-        }
+            HandleHotkey();
 
+            if (currentPlaceObject != null)
+            {
+                MoveObject();
+                MouseWheel();
+                ReleaseClick();
+                ChangeWallLen();
+            }
+            else
+            {
+                HandleSelection();
+            }
+        }
     }
 
     void ChangeWallLen()
@@ -97,6 +99,10 @@ public class objectPlacement : MonoBehaviour
                     DeselectCurrentWall();
                     selectedWall = hitWall;
                     selectedWall.GetComponent<Animator>().SetBool("isSelected", true);
+                } 
+                else 
+                {
+                    DeselectCurrentWall();
                 }
             }
             else

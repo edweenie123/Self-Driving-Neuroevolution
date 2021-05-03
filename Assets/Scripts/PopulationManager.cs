@@ -9,7 +9,7 @@ public class PopulationManager : MonoBehaviour
 {
     public GameObject carPrefab;
     public GameObject carHolder;
-    public Vector3 startPosition;
+    public Transform spawnPoint;
 
     int populationSize = 40;
     float populationTime = 100f;
@@ -29,30 +29,38 @@ public class PopulationManager : MonoBehaviour
     public static float mutationRate = 0.07f;
     // public static float mutationMagnitude = 0.15f;
 
+    bool startedYet = false;
+
     void Start()
     {
         matingPool = new List<float>();
         lastGeneration = new List<NeuralNetwork>();
         currentGeneration = new List<NeuralNetwork>();
-
-        CreateStartingGeneration();
     }
 
     void Update()
     {
-        timer += Time.deltaTime;
-        timer2 += Time.deltaTime;
+        if (!GlobalVariables.isPausedEvolution) {
+            if (!startedYet) 
+            {
+                startedYet = true;
+                CreateStartingGeneration();
+            }
 
-        if (timer > checkAllDeadInterval)
-        {
-            if (EntireGenerationDead()) CreateNewGeneration();
-            timer = 0;
-        }
+            timer += Time.deltaTime;
+            timer2 += Time.deltaTime;
 
-        if (timer2 > populationTime)
-        {
-            CreateNewGeneration();
-            timer2 = 0;
+            if (timer > checkAllDeadInterval)
+            {
+                if (EntireGenerationDead()) CreateNewGeneration();
+                timer = 0;
+            }
+
+            if (timer2 > populationTime)
+            {
+                CreateNewGeneration();
+                timer2 = 0;
+            }
         }
     }
 
@@ -79,7 +87,7 @@ public class PopulationManager : MonoBehaviour
         for (int i = 0; i < populationSize; i++)
         {
             // instantiate a car and set it's neural network weights to be equal to the child's
-            GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
+            GameObject t = Instantiate(carPrefab, spawnPoint.position, Quaternion.identity);
             NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
 
             childNetwork.InitializeNetwork();
@@ -113,7 +121,7 @@ public class PopulationManager : MonoBehaviour
         for (int i = 0; i < populationSize; i++)
         {
             if (i==0) {
-                GameObject bestT = Instantiate(carPrefab, startPosition, Quaternion.identity);
+                GameObject bestT = Instantiate(carPrefab, spawnPoint.position, Quaternion.identity);
                 NeuralNetwork bestTNetwork = bestT.GetComponent<NeuralNetwork>();
                 bestTNetwork.InitializeNetwork();
                 bestTNetwork.SetWeights(bestNN);
@@ -126,7 +134,7 @@ public class PopulationManager : MonoBehaviour
                 NeuralNetwork parentB = SelectParent();
 
                 // instantiate a car and set it's neural network weights to be equal to the crossover of A and B
-                GameObject t = Instantiate(carPrefab, startPosition, Quaternion.identity);
+                GameObject t = Instantiate(carPrefab, spawnPoint.position, Quaternion.identity);
                 NeuralNetwork childNetwork = t.GetComponent<NeuralNetwork>();
 
                 childNetwork.InitializeNetwork();

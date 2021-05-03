@@ -70,8 +70,11 @@ public class CarMovement : MonoBehaviour
             gameObject.GetComponent<BoxCollider>().enabled = false;
 
             // particle effect
-            GameObject particle = Instantiate(deathEffect, transform.position, Quaternion.identity);
-            if (isBestFromLastGen) particle.GetComponent<Renderer>().material = MaterialHolder.bestCarMat;
+            if (SystemSettings.particleEffectToggle)
+            {
+                GameObject particle = Instantiate(deathEffect, transform.position, Quaternion.identity);
+                if (isBestFromLastGen) particle.GetComponent<Renderer>().material = MaterialHolder.bestCarMat;
+            }
 
             // make the sensor lines invisible
             foreach (var line in sensorLines)
@@ -169,26 +172,28 @@ public class CarMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDead)
-        {
-            timer += Time.deltaTime;
-            timer2 += Time.deltaTime;
-
-            if (timer2 > 0.1f)
+        if (!GlobalVariables.isPausedEvolution) {
+            if (!isDead)
             {
-                UpdateFitness();
-                timer2 = 0;
+                timer += Time.deltaTime;
+                timer2 += Time.deltaTime;
+
+                if (timer2 > 0.1f)
+                {
+                    UpdateFitness();
+                    timer2 = 0;
+                }
+
+                UpdateSensors();
+
+                if (timer > feedForwardInterval)
+                {
+                    (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
+                    timer = 0;
+                }
+
+                MoveCar(accel, rotationAngle);
             }
-
-            UpdateSensors();
-
-            if (timer > feedForwardInterval)
-            {
-                (accel, rotationAngle) = network.ForwardPropagate(sensorDistances);
-                timer = 0;
-            }
-
-            MoveCar(accel, rotationAngle);
         }
     }
 
