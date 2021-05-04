@@ -18,11 +18,13 @@ public class UIManager : MonoBehaviour
     public Color playCol;
     public Color pauseCol;
 
+    public GameObject playingUI;
+    public GameObject pauseUI;
+
     public float timeScale = 1f;
 
     void Awake()
     {
-        generationText = GameObject.Find("GenerationText").GetComponent<Text>();
         // timeScaleText = GameObject.Find("TimeText").GetComponent<Text>();
         ppText = playPauseButton.GetComponentInChildren<Text>();
     }
@@ -37,18 +39,25 @@ public class UIManager : MonoBehaviour
     {
         sp.SwitchVisibility();
         
-        timeScaleButton.ResetTimeScale();
         if (GlobalVariables.isPausedEvolution) 
         {
             EditText(ppText, "Pause");    
             playPauseButton.GetComponent<Image>().color = pauseCol;
+            playingUI.SetActive(true);
+            pauseUI.SetActive(false);
+
+            generationText = GameObject.Find("GenerationText").GetComponent<Text>();
         } 
         else 
         {
             EditText(ppText, "Start");
             playPauseButton.GetComponent<Image>().color = playCol;
+            
+            playingUI.SetActive(false);
+            pauseUI.SetActive(true);
         }
 
         GlobalVariables.isPausedEvolution = !GlobalVariables.isPausedEvolution;
+        timeScaleButton.ResetTimeScale();
     }
 }
