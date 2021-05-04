@@ -7,17 +7,23 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static Text generationText;
-    public static Text timeScaleText;
+    // public static Text timeScaleText;
     public Button playPauseButton;
     Text ppText;
+
+    public OptionButtonUI timeScaleButton;
+
+    public SpawnPoint sp;
 
     public Color playCol;
     public Color pauseCol;
 
+    public float timeScale = 1f;
+
     void Awake()
     {
         generationText = GameObject.Find("GenerationText").GetComponent<Text>();
-        timeScaleText = GameObject.Find("TimeText").GetComponent<Text>();
+        // timeScaleText = GameObject.Find("TimeText").GetComponent<Text>();
         ppText = playPauseButton.GetComponentInChildren<Text>();
     }
 
@@ -29,6 +35,9 @@ public class UIManager : MonoBehaviour
     // gets called when play pause button is pressed
     public void PlayPause()
     {
+        sp.SwitchVisibility();
+        
+        timeScaleButton.ResetTimeScale();
         if (GlobalVariables.isPausedEvolution) 
         {
             EditText(ppText, "Pause");    

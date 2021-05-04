@@ -16,8 +16,11 @@ public class SpawnPoint : MonoBehaviour
 
     void Update()
     {
-        HandleSelection();
-        HandleMovement();
+        if (GlobalVariables.isPausedEvolution)
+        {
+            HandleSelection();
+            HandleMovement();
+        }
     }
 
     void HandleSelection()
@@ -66,5 +69,10 @@ public class SpawnPoint : MonoBehaviour
                 transform.position = newLoc;
             }
         }
+    }
+
+    public void SwitchVisibility() 
+    {
+        GetComponent<MeshRenderer>().enabled = !GetComponent<MeshRenderer>().enabled;
     }
 }

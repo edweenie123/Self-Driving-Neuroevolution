@@ -70,8 +70,11 @@ public class CarMovement : MonoBehaviour
             gameObject.GetComponent<BoxCollider>().enabled = false;
 
             // particle effect
-            GameObject particle = Instantiate(deathEffect, transform.position, Quaternion.identity);
-            if (isBestFromLastGen) particle.GetComponent<Renderer>().material = MaterialHolder.bestCarMat;
+            if (SystemSettings.particleEffectToggle)
+            {
+                GameObject particle = Instantiate(deathEffect, transform.position, Quaternion.identity);
+                if (isBestFromLastGen) particle.GetComponent<Renderer>().material = MaterialHolder.bestCarMat;
+            }
 
             // make the sensor lines invisible
             foreach (var line in sensorLines)
