@@ -33,7 +33,7 @@ public class OptionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         timeScaleId = 0;
         SystemSettings.timeScale = 1;
-        childText.text = "Time Scale: " + SystemSettings.timeScale + "x";
+        if (childText != null) childText.text = "Time Scale: " + SystemSettings.timeScale + "x";
         Time.timeScale = SystemSettings.timeScale;
     }
 
