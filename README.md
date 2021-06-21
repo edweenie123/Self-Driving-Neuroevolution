@@ -2,6 +2,7 @@
 
 This project is a simple neuroevolution environment for self-driving cars made in Unity. In our project, each agent is composed of a fully connected neural network that takes in ray-cast data as input and returns acceleration and steering directions as output. Initially, each agent begins with randomized weights and by simulating the process of evolution through a genetic algorithm, agents learn how to drive around any track without crashing into walls. 
 
+## Demo
 ![demo](gif/demo.gif)
 
 ## Features
