@@ -15,7 +15,7 @@ This project is a simple neuroevolution environment for self-driving cars made i
 In addition to the environment itself, a video series was made documenting all the theory associated with this project. For more details on how this project works, visit the playlist [here](https://www.youtube.com/playlist?list=PL9H-jTxvkHm3sYmsrsHL4xEypVPBOkK90). 
 
 ## Installation
-To run the environment locally:
+To run the project locally:
 1. Clone the repository
 	``` sh
 	git clone https://github.com/edweenie123/Self-Driving-Neuroevolution.git
